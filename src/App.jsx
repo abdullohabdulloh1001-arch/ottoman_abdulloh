@@ -20,7 +20,8 @@ import {
   Gift,
   Book,
   Heart,
-  MapPin
+  MapPin,
+  Truck
 } from 'lucide-react';
 
 // Register GSAP plugins
@@ -757,101 +758,57 @@ export default function App() {
         </div>
       </section>
 
-      {/* DETAILED PRICE / PACKAGE TIERS */}
-      <section id="collections" className="py-24 md:py-36 px-6 md:px-12 max-w-7xl mx-auto bg-white border-t border-royalBorder relative z-20">
-        <div className="text-center mb-16 md:mb-24">
-          <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-royalBlue border border-royalBlue/20 rounded-full px-4 py-1.5 bg-royalBlueLight/30 font-bold">
-            Eksklyuziv Paketlar
-          </span>
-          <h2 className="text-3xl md:text-5xl font-bold font-serif text-navyBlue mt-4">
-            Kolleksiya To'plamlari
-          </h2>
-          <p className="text-sm md:text-base text-slateMuted max-w-lg mx-auto mt-4 leading-relaxed font-light">
-            Kitobxonlar va nafis tuhfa izlovchilar uchun maxsus jamlangan do'kon to'plamlari.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch max-w-6xl mx-auto">
-          
-          {/* Tier 1: Bitik */}
-          <div className="bg-royalBg border border-royalBorder rounded-6xl p-8 md:p-10 flex flex-col justify-between hover:border-royalBlue/20 transition-all duration-500 shadow-xl">
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <span className="font-mono text-xs text-slateMuted">PAKET 01</span>
-                <span className="font-mono text-xs text-royalBlue font-bold">EST. $180</span>
-              </div>
-              <h3 className="text-2xl font-serif text-navyBlue font-bold mb-4">Bitik</h3>
-              <p className="text-sm text-slateDark leading-relaxed font-light mb-8">
-                Samarqand qog'ozida bitilgan klassik g'azal yoki she'riyat namunasi, mum muhrli nafis sovg'abop o'ramda.
-              </p>
-              
-              <ul className="space-y-4 font-mono text-[11px] text-slateDark/80 mb-8 border-t border-royalBorder pt-8">
-                <li className="flex items-center gap-3"><Check className="w-4 h-4 text-royalBlue" /> Qo'lda chizilgan xattotlik</li>
-                <li className="flex items-center gap-3"><Check className="w-4 h-4 text-royalBlue" /> Oltin kukuni sepilgan maxsus qog'oz</li>
-                <li className="flex items-center gap-3"><Check className="w-4 h-4 text-royalBlue" /> Baxmal g'ilof va mum muhr</li>
-                <li className="flex items-center gap-3 text-royalBlue font-semibold"><Check className="w-4 h-4 text-royalBlue" /> O'LCHAM: 140x35sm | 24k Oltin naqsh</li>
-              </ul>
-            </div>
-
-            <MagneticButton variant="dark" className="w-full bg-navyBlue text-white" onClick={handleTelegramRedirect}>
-              Sotib Olish
-            </MagneticButton>
+      {/* STORE FEATURES GRID */}
+      <section id="afzalliklar" className="py-24 md:py-36 px-6 md:px-12 bg-white border-t border-royalBorder relative z-20">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-16 md:mb-24">
+            <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-royalBlue border border-royalBlue/20 rounded-full px-4 py-1.5 bg-royalBlueLight/30 font-bold">
+              Nima Uchun Biz?
+            </span>
+            <h2 className="text-3xl md:text-5xl font-bold font-serif text-navyBlue mt-4">
+              Sohaga Mos Afzalliklar
+            </h2>
+            <p className="text-sm md:text-base text-slateMuted max-w-lg mx-auto mt-4 leading-relaxed font-light">
+              Mijozlarimizga doimo eng yaxshi tajribani taqdim etish — bizning asosiy maqsadimiz.
+            </p>
           </div>
 
-          {/* Tier 2: Kodeks (Highlighted) */}
-          <div className="bg-white border-2 border-royalBlue rounded-6xl p-8 md:p-10 flex flex-col justify-between scale-100 lg:scale-[1.03] transition-all duration-500 shadow-2xl relative z-10">
-            <div className="absolute top-0 right-10 -translate-y-1/2 bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase font-bold px-4 py-1.5 rounded-full">
-              ENG TAVSIYA ETILADIGAN
-            </div>
-            
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <span className="font-mono text-xs text-royalBlue font-bold">PAKET 02</span>
-                <span className="font-mono text-xs text-royalBlue font-bold">EST. $1,200</span>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+
+            {/* Feature 1: Hamyonbop va Sifatli */}
+            <div className="bg-royalBg border border-royalBorder rounded-5xl p-8 md:p-10 text-center hover:border-royalBlue/20 hover:shadow-2xl transition-all duration-500 shadow-xl group">
+              <div className="w-16 h-16 mx-auto mb-6 bg-royalBlueLight/40 rounded-full flex items-center justify-center group-hover:bg-royalBlue/10 transition-colors duration-300">
+                <BookOpen className="w-7 h-7 text-royalBlue" />
               </div>
-              <h3 className="text-2xl font-serif text-navyBlue font-bold mb-4">Kodeks</h3>
-              <p className="text-sm text-slateDark leading-relaxed font-light mb-8">
-                Klassik she'riyat yoki diniy manba, to'liq tabiiy ko'k charm muqovali va tilla suvi bezaklari bilan tayyorlangan kitob.
+              <h3 className="text-xl font-serif font-bold text-navyBlue mb-3">Hamyonbop va Sifatli</h3>
+              <p className="text-sm text-slateMuted font-light leading-relaxed">
+                Sizga eng sara kitoblar va sovg'alarni bozordagidan ham qulayroq narxlarda taqdim etamiz.
               </p>
-              
-              <ul className="space-y-4 font-mono text-[11px] text-slateDark/90 mb-8 border-t border-royalBlue/20 pt-8">
-                <li className="flex items-center gap-3"><Check className="w-4 h-4 text-royalBlue" /> Tabiiy charm muqova (echki terisi)</li>
-                <li className="flex items-center gap-3"><Check className="w-4 h-4 text-royalBlue" /> 24 karatli oltin bilan bezatilgan sahifalar</li>
-                <li className="flex items-center gap-3"><Check className="w-4 h-4 text-royalBlue" /> Yong'oq yog'ochidan ishlangan baxmal quti</li>
-                <li className="flex items-center gap-3 text-royalBlue font-semibold"><Check className="w-4 h-4 text-royalBlue" /> O'LCHAM: 24x17sm | Klassik 24k bezak</li>
-              </ul>
             </div>
 
-            <MagneticButton variant="dark" className="w-full bg-navyBlue border-navyBlue text-white hover:bg-royalBlue" onClick={handleTelegramRedirect}>
-              Sotib Olish
-            </MagneticButton>
-          </div>
-
-          {/* Tier 3: Devon */}
-          <div className="bg-royalBg border border-royalBorder rounded-6xl p-8 md:p-10 flex flex-col justify-between hover:border-royalBlue/20 transition-all duration-500 shadow-xl">
-            <div>
-              <div className="flex justify-between items-center mb-6">
-                <span className="font-mono text-xs text-slateMuted">PAKET 03</span>
-                <span className="font-mono text-xs text-royalBlue font-bold">EST. $4,500</span>
+            {/* Feature 2: Tezkor Yetkazib Berish */}
+            <div className="bg-royalBg border border-royalBorder rounded-5xl p-8 md:p-10 text-center hover:border-royalBlue/20 hover:shadow-2xl transition-all duration-500 shadow-xl group">
+              <div className="w-16 h-16 mx-auto mb-6 bg-royalBlueLight/40 rounded-full flex items-center justify-center group-hover:bg-royalBlue/10 transition-colors duration-300">
+                <Truck className="w-7 h-7 text-royalBlue" />
               </div>
-              <h3 className="text-2xl font-serif text-navyBlue font-bold mb-4">Devon</h3>
-              <p className="text-sm text-slateDark leading-relaxed font-light mb-8">
-                Butun boshli shaxsiy kolleksiya yoki oilaviy tarixiy kitoblar to'plamini maxsus yog'och shkafi bilan yaratish.
+              <h3 className="text-xl font-serif font-bold text-navyBlue mb-3">Tezkor Yetkazib Berish</h3>
+              <p className="text-sm text-slateMuted font-light leading-relaxed">
+                Buyurtmangizni O'zbekiston bo'ylab eng qisqa vaqt ichida xavfsiz yetkazib beramiz.
               </p>
-              
-              <ul className="space-y-4 font-mono text-[11px] text-slateDark/80 mb-8 border-t border-royalBorder pt-8">
-                <li className="flex items-center gap-3"><Check className="w-4 h-4 text-royalBlue" /> Ko'p jildli kitoblar to'plami (5 jildgacha)</li>
-                <li className="flex items-center gap-3"><Check className="w-4 h-4 text-royalBlue" /> To'liq shaxsiylashtirilgan mualliflik bezaklari</li>
-                <li className="flex items-center gap-3"><Check className="w-4 h-4 text-royalBlue" /> Yong'oq daraxtidan yasalgan maxsus shkaf</li>
-                <li className="flex items-center gap-3 text-royalBlue font-semibold"><Check className="w-4 h-4 text-royalBlue" /> O'LCHAM: Shaxsiy buyurtma asosida</li>
-              </ul>
             </div>
 
-            <MagneticButton variant="dark" className="w-full bg-navyBlue text-white" onClick={handleTelegramRedirect}>
-              Sotib Olish
-            </MagneticButton>
-          </div>
+            {/* Feature 3: Bespoke Qadoqlash */}
+            <div className="bg-royalBg border border-royalBorder rounded-5xl p-8 md:p-10 text-center hover:border-royalBlue/20 hover:shadow-2xl transition-all duration-500 shadow-xl group">
+              <div className="w-16 h-16 mx-auto mb-6 bg-royalBlueLight/40 rounded-full flex items-center justify-center group-hover:bg-royalBlue/10 transition-colors duration-300">
+                <Gift className="w-7 h-7 text-royalBlue" />
+              </div>
+              <h3 className="text-xl font-serif font-bold text-navyBlue mb-3">Bespoke Qadoqlash</h3>
+              <p className="text-sm text-slateMuted font-light leading-relaxed">
+                Har bir kitob va sovg'ani nafis va premium qadoqlarda, hadya qilishga tayyor holatda yetkazamiz.
+              </p>
+            </div>
 
+          </div>
         </div>
       </section>
 
