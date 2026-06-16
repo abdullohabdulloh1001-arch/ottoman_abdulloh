@@ -589,37 +589,34 @@ export default function App() {
 
       {/* Umra packages are now available inside the overlay modal popup */}
 
-      {/* MANIFESTO SECTION */}
+      {/* MISSION STATEMENT SECTION */}
       <section 
         id="philosophy" 
         ref={philosophySectionRef}
-        className="relative bg-white border-y border-royalBorder py-32 md:py-48 px-6 overflow-hidden"
+        className="relative border-y border-royalBorder py-28 md:py-40 px-6 overflow-hidden"
+        style={{ backgroundColor: '#f8f7f4' }}
       >
-        {/* Parallax organic texture background */}
-        <div className="absolute inset-0 z-0 opacity-[0.06] pointer-events-none mix-blend-overlay">
+        {/* Subtle warm texture background */}
+        <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none">
           <img 
             src="https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?q=80&w=1600" 
-            alt="Mesh textures" 
+            alt="Soft texture" 
             className="w-full h-full object-cover scale-110"
           />
         </div>
 
-        <div className="relative z-10 max-w-5xl mx-auto flex flex-col items-center text-center">
-          <span className="philosophy-fade-up font-mono text-xs tracking-[0.25em] uppercase text-royalBlue mb-6 font-bold">
-            DO'KONIMIZ FALSAFASI
+        <div className="relative z-10 max-w-3xl mx-auto flex flex-col items-center text-center">
+          <span className="philosophy-fade-up font-mono text-[10px] tracking-[0.3em] uppercase text-royalBlue mb-8 font-bold border border-royalBlue/15 rounded-full px-5 py-2 bg-white/60">
+            BIZNING MAQSADIMIZ
           </span>
-          <p className="philosophy-fade-up text-slateMuted text-base md:text-xl max-w-2xl font-light leading-relaxed mb-12">
-            "Ko'plab zamonaviy do'konlar faqat tezkor ommaviy nashrlar va qisqa muddatli, ma'naviy qiymati kam bo'lgan tovarlarni taqdim etadi."
-          </p>
-          <h2 className="philosophy-fade-up text-3xl md:text-5xl lg:text-6xl font-serif text-navyBlue leading-tight font-light max-w-4xl">
-            Biz esa:
-            <span className="block font-drama text-royalBlue text-5xl md:text-7xl lg:text-8xl mt-4 font-normal">
-              avlodlardan avlodlarga o'tuvchi
-            </span>
-            ilm manbalari, bebaholar va qadrdon sovg'alarni ulashamiz.
+
+          <h2 className="philosophy-fade-up text-2xl sm:text-3xl md:text-5xl font-serif text-navyBlue leading-snug md:leading-tight font-bold tracking-tight max-w-2xl">
+            Biz mijozlarga bozordan ham yaqinmiz va hamyonbobmiz.
           </h2>
+
+          <div className="philosophy-fade-up w-12 h-[2px] bg-royalBlue/30 rounded-full mt-10 mb-10"></div>
           
-          <div className="philosophy-fade-up mt-16">
+          <div className="philosophy-fade-up">
             <MagneticButton onClick={handleTelegramRedirect} className="bg-royalBlue text-white hover:bg-navyBlue">
               Telegram orqali bog'lanish
             </MagneticButton>
