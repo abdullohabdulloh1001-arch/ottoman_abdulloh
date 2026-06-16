@@ -611,7 +611,7 @@ export default function App() {
           </span>
 
           <h2 className="philosophy-fade-up text-2xl sm:text-3xl md:text-5xl font-serif text-navyBlue leading-snug md:leading-tight font-bold tracking-tight max-w-2xl">
-            Biz mijozlarga bozordan ham yaqinmiz va hamyonbobmiz.
+            Biz xalqqa bozordan yaqinroqmiz.
           </h2>
 
           <div className="philosophy-fade-up w-12 h-[2px] bg-royalBlue/30 rounded-full mt-10 mb-10"></div>
