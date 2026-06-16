@@ -647,17 +647,14 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Animation Graphic (Rotating geometric star motif) */}
+              {/* Animation Graphic (Rotating brand logo) */}
               <div className="flex items-center justify-center p-8 bg-white border border-royalBorder rounded-6xl h-[300px] md:h-[400px] shadow-2xl relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-tr from-royalBlue/5 to-transparent pointer-events-none" />
-                <svg className="w-48 h-48 text-royalBlue/40 animate-[spin_40s_linear_infinite]" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="0.75">
-                  <circle cx="50" cy="50" r="45" strokeDasharray="2 2" />
-                  <circle cx="50" cy="50" r="38" />
-                  <polygon points="50,15 60,35 82,35 65,49 71,71 50,58 29,71 35,49 18,35 40,35" />
-                  <polygon points="50,22 58,38 75,38 62,49 67,66 50,56 33,66 38,49 25,38 42,38" transform="rotate(18, 50, 50)" />
-                  <polygon points="50,28 55,40 68,40 58,49 62,62 50,54 38,62 42,49 32,40 45,40" transform="rotate(36, 50, 50)" strokeDasharray="3 1" />
-                  <circle cx="50" cy="50" r="8" />
-                </svg>
+                <img 
+                  src="/logo.png" 
+                  alt="Qalam Samarqand" 
+                  className="w-36 h-36 md:w-48 md:h-48 object-contain animate-[spin_40s_linear_infinite]"
+                />
               </div>
             </div>
           </div>
