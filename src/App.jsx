@@ -628,32 +628,33 @@ export default function App() {
       <section id="protocol" className="relative bg-royalBg">
         <div ref={protocolContainerRef} className="sticky-stack-container">
           
-          {/* Card 1: Tarixiy Kitoblar */}
+          {/* Card 1: Premium Sovg'alar */}
           <div id="tarixiy-kitoblar" className="protocol-card min-h-screen w-full bg-royalBg flex items-center justify-center px-6 md:px-16 py-24 absolute top-0 left-0">
             <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-center">
               <div>
                 <span className="font-mono text-xs text-royalBlue tracking-[0.25em] uppercase block mb-4 font-bold">
-                  KATEGORIYA 01 // TARIXIY KITOBLAR
+                  KATEGORIYA 01 // PREMIUM SOVG'ALAR
                 </span>
                 <h3 className="text-4xl md:text-5xl font-bold font-serif text-navyBlue mb-6 leading-tight">
-                  Tarixiy Manbalar va Buyuk Yilnomalar
+                  Yaqinlaringiz uchun mukammal hadyalar.
                 </h3>
                 <p className="text-slateDark text-sm md:text-base leading-relaxed mb-8 font-light">
-                  Ipak yo'li o'lkalarining qadimiy yilnomalari, buyuk sarkardalar tarixi va o'tmish kitoblari. Har bir nashr yuqori sifatli charm muqovalash texnologiyalari va an'anaviy o'zbek bezaklari bilan tayyorlanib, uzoq yillik tarixni yoritadi.
+                  Yaqinlaringizga sovg'a izlashning endi hech qanday hojati yo'q. Qadrli va nafis to'plamlarning barchasi endi bizning do'konimizda mujassam.
                 </p>
                 <div className="font-mono text-xs text-royalBlue/70 space-y-2 border-l border-royalBlue/30 pl-4">
-                  <div>// TARIXIY MANBALARNI MUKAMMAL NASHR ETISH</div>
-                  <div>// ALISHER NAVOIY VA BOBURNOMA MAXSUS TO'PLAMLARI</div>
+                  <div>// PREMIUM SOVG'ALAR VA KITOB TO'PLAMLARI</div>
+                  <div>// EKSKLYUZIV QADOQLASH XIZMATI VA YETKAZIB BERISH</div>
                 </div>
               </div>
 
-              {/* Animation Graphic (Rotating brand logo) */}
+              {/* Animation Graphic (Rotating brand logo with premium isolation mask) */}
               <div className="flex items-center justify-center p-8 bg-white border border-royalBorder rounded-6xl h-[300px] md:h-[400px] shadow-2xl relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-tr from-royalBlue/5 to-transparent pointer-events-none" />
                 <img 
                   src="/logo.png" 
                   alt="Qalam Samarqand" 
                   className="w-36 h-36 md:w-48 md:h-48 object-contain animate-[spin_40s_linear_infinite]"
+                  style={{ mixBlendMode: 'multiply', clipPath: 'circle(50%)' }}
                 />
               </div>
             </div>
