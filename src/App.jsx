@@ -70,7 +70,14 @@ const ALL_PRODUCTS = [
   { id: 'b5', name: "Payg'ambarlar qissasi", price: "110 000", image: "/images/kitob_paygambarlar_qissasi.jpg", category: "Diniy Kitoblar" },
   { id: 'u1', name: "Ekonom To'plam", price: "1 000 000", image: "/images/umra_ekonom.jpg", category: "Umra Anjomlari" },
   { id: 'u2', name: "Standart To'plam", price: "1 500 000", image: "/images/umra_standart.jpg", category: "Umra Anjomlari" },
-  { id: 'u3', name: "Premium To'plam", price: "2 000 000", image: "/images/umra_premium.jpg", category: "Umra Anjomlari" }
+  { id: 'u3', name: "Premium To'plam", price: "2 000 000", image: "/images/umra_premium.jpg", category: "Umra Anjomlari" },
+  { id: 'k1', name: "Er-xotinga nasihat", price: "115 000", image: "/images/kitob_er_xotin.jpg", category: "Kitoblar" },
+  { id: 'k2', name: "Jannat bo'stonidagi oilaviy oqshomlar", price: "107 000", image: "/images/kitob_jannat_bostoni.jpg", category: "Kitoblar" },
+  { id: 'k3', name: "Oqshom go'zalliklari", price: "94 000", image: "/images/kitob_oqshom_gozalliklari.jpg", category: "Kitoblar" },
+  { id: 'k4', name: "Qalbi singanlarga", price: "61 000", image: "/images/kitob_qalbi_singanlarga.jpg", category: "Kitoblar" },
+  { id: 'k5', name: "Binafsha shu'lasi", price: "75 000", image: "/images/kitob_binafsha_1.jpg", category: "Kitoblar" },
+  { id: 'k6', name: "Binafsha shu'lasi 2", price: "85 000", image: "/images/kitob_binafsha_2.jpg", category: "Kitoblar" },
+  { id: 'k7', name: "Qur'ondan maktublar", price: "75 000", image: "/images/kitob_qurondan_maktublar.jpg", category: "Kitoblar" }
 ];
 
 // MAIN APP COMPONENT
@@ -79,6 +86,7 @@ export default function App() {
   const [scrolled, setScrolled] = useState(false);
   const [isUmraModalOpen, setIsUmraModalOpen] = useState(false);
   const [isDiniyModalOpen, setIsDiniyModalOpen] = useState(false);
+  const [isKitoblarModalOpen, setIsKitoblarModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredProducts = ALL_PRODUCTS.filter(product =>
@@ -88,7 +96,7 @@ export default function App() {
 
   // Disable body scroll when any modal is open
   useEffect(() => {
-    if (isUmraModalOpen || isDiniyModalOpen) {
+    if (isUmraModalOpen || isDiniyModalOpen || isKitoblarModalOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -589,7 +597,7 @@ export default function App() {
                 </p>
               </div>
               <button
-                onClick={handleTelegramRedirect}
+                onClick={() => setIsKitoblarModalOpen(true)}
                 className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[10px] tracking-widest uppercase py-3.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02]"
               >
                 Ko'rish va Buyurtma Berish <ArrowRight className="w-4 h-4" />
@@ -1249,6 +1257,268 @@ export default function App() {
                 </div>
                 <button
                   onClick={() => window.open(getTelegramPurchaseLink("Payg'ambarlar qissasi", "/images/kitob_paygambarlar_qissasi.jpg"), '_blank')}
+                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
+                >
+                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+            </div>
+
+            {/* Store Information Footer */}
+            <div className="mt-10 p-6 rounded-3xl bg-royalBlueLight/30 border border-royalBlue/10 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-6">
+              <div className="flex items-center gap-3.5 text-navyBlue">
+                <div className="p-3 bg-white rounded-full border border-royalBlue/15 shadow-sm text-royalBlue flex-shrink-0">
+                  <MapPin className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="block font-mono text-[9px] uppercase tracking-wider text-royalBlue font-bold">// Bizning Manzil</span>
+                  <span className="text-xs font-medium">Samarqand shahar, Registon non bozorchasi ro'parasidagi "Qalam" kitoblar do'koni</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3.5 text-navyBlue">
+                <div className="p-3 bg-white rounded-full border border-royalBlue/15 shadow-sm text-royalBlue flex-shrink-0">
+                  <Phone className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="block font-mono text-[9px] uppercase tracking-wider text-royalBlue font-bold">// Telefon raqamlar</span>
+                  <span className="text-xs font-medium flex flex-wrap gap-x-4">
+                    <a href="tel:+998979162526" className="hover:text-royalBlue hover:underline transition-colors font-mono font-bold">+998 (97) 916 25 26</a>
+                    <a href="tel:+998970252600" className="hover:text-royalBlue hover:underline transition-colors font-mono font-bold">+998 (97) 025 26 00</a>
+                  </span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* Premium Overlay Modal for Kitoblar */}
+      {isKitoblarModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-navyBlue/60 backdrop-blur-md p-4 animate-fade-in">
+          <div className="bg-royalBg border border-royalBlue/10 rounded-[2.5rem] w-full max-w-6xl max-h-[90vh] overflow-y-auto shadow-2xl relative p-6 md:p-10 animate-scale-up">
+            
+            {/* Modal Header */}
+            <div className="flex justify-between items-start mb-8 pb-4 border-b border-royalBorder">
+              <div>
+                <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-royalBlue border border-royalBlue/20 rounded-full px-4 py-1.5 bg-royalBlueLight/30 font-bold">
+                  Ma'naviy Va Ilmiy
+                </span>
+                <h2 className="text-2xl md:text-4xl font-bold font-serif text-navyBlue mt-3">
+                  Kitoblar Kolleksiyasi
+                </h2>
+              </div>
+              <button 
+                onClick={() => setIsKitoblarModalOpen(false)}
+                className="bg-navyBlue/5 hover:bg-navyBlue/10 text-navyBlue p-3 rounded-full transition-all flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase font-bold"
+              >
+                <X className="w-4 h-4" />
+                <span>Yopish</span>
+              </button>
+            </div>
+
+            {/* 7 Premium Book Cards Layout */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-stretch">
+              
+              {/* Book 1 */}
+              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
+                <div>
+                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <img 
+                      src="/images/kitob_er_xotin.jpg" 
+                      alt="Er-xotinga nasihat" 
+                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
+                    />
+                  </div>
+                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
+                    Er-xotinga nasihat
+                  </h3>
+                  
+                  {/* Elegant Currency Wrapper */}
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
+                    <span>Narxi:</span>
+                    <span className="text-navyBlue text-sm font-extrabold">115 000</span>
+                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => window.open(getTelegramPurchaseLink("Er-xotinga nasihat", "/images/kitob_er_xotin.jpg"), '_blank')}
+                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
+                >
+                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Book 2 */}
+              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
+                <div>
+                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <img 
+                      src="/images/kitob_jannat_bostoni.jpg" 
+                      alt="Jannat bo'stonidagi oilaviy oqshomlar" 
+                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
+                    />
+                  </div>
+                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
+                    Jannat bo'stonidagi oilaviy oqshomlar
+                  </h3>
+                  
+                  {/* Elegant Currency Wrapper */}
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
+                    <span>Narxi:</span>
+                    <span className="text-navyBlue text-sm font-extrabold">107 000</span>
+                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => window.open(getTelegramPurchaseLink("Jannat bo'stonidagi oilaviy oqshomlar", "/images/kitob_jannat_bostoni.jpg"), '_blank')}
+                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
+                >
+                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Book 3 */}
+              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
+                <div>
+                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <img 
+                      src="/images/kitob_oqshom_gozalliklari.jpg" 
+                      alt="Oqshom go'zalliklari" 
+                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
+                    />
+                  </div>
+                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
+                    Oqshom go'zalliklari
+                  </h3>
+                  
+                  {/* Elegant Currency Wrapper */}
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
+                    <span>Narxi:</span>
+                    <span className="text-navyBlue text-sm font-extrabold">94 000</span>
+                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => window.open(getTelegramPurchaseLink("Oqshom go'zalliklari", "/images/kitob_oqshom_gozalliklari.jpg"), '_blank')}
+                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
+                >
+                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Book 4 */}
+              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
+                <div>
+                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <img 
+                      src="/images/kitob_qalbi_singanlarga.jpg" 
+                      alt="Qalbi singanlarga" 
+                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
+                    />
+                  </div>
+                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
+                    Qalbi singanlarga
+                  </h3>
+                  
+                  {/* Elegant Currency Wrapper */}
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
+                    <span>Narxi:</span>
+                    <span className="text-navyBlue text-sm font-extrabold">61 000</span>
+                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => window.open(getTelegramPurchaseLink("Qalbi singanlarga", "/images/kitob_qalbi_singanlarga.jpg"), '_blank')}
+                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
+                >
+                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Book 5 */}
+              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
+                <div>
+                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <img 
+                      src="/images/kitob_binafsha_1.jpg" 
+                      alt="Binafsha shu'lasi" 
+                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
+                    />
+                  </div>
+                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
+                    Binafsha shu'lasi
+                  </h3>
+                  
+                  {/* Elegant Currency Wrapper */}
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
+                    <span>Narxi:</span>
+                    <span className="text-navyBlue text-sm font-extrabold">75 000</span>
+                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => window.open(getTelegramPurchaseLink("Binafsha shu'lasi", "/images/kitob_binafsha_1.jpg"), '_blank')}
+                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
+                >
+                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Book 6 */}
+              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
+                <div>
+                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <img 
+                      src="/images/kitob_binafsha_2.jpg" 
+                      alt="Binafsha shu'lasi 2" 
+                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
+                    />
+                  </div>
+                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
+                    Binafsha shu'lasi 2
+                  </h3>
+                  
+                  {/* Elegant Currency Wrapper */}
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
+                    <span>Narxi:</span>
+                    <span className="text-navyBlue text-sm font-extrabold">85 000</span>
+                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => window.open(getTelegramPurchaseLink("Binafsha shu'lasi 2", "/images/kitob_binafsha_2.jpg"), '_blank')}
+                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
+                >
+                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
+                </button>
+              </div>
+
+              {/* Book 7 */}
+              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
+                <div>
+                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <img 
+                      src="/images/kitob_qurondan_maktublar.jpg" 
+                      alt="Qur'ondan maktublar" 
+                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
+                    />
+                  </div>
+                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
+                    Qur'ondan maktublar
+                  </h3>
+                  
+                  {/* Elegant Currency Wrapper */}
+                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
+                    <span>Narxi:</span>
+                    <span className="text-navyBlue text-sm font-extrabold">75 000</span>
+                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => window.open(getTelegramPurchaseLink("Qur'ondan maktublar", "/images/kitob_qurondan_maktublar.jpg"), '_blank')}
                   className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
                 >
                   Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
