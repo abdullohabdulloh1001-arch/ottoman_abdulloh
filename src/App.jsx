@@ -59,6 +59,32 @@ const MagneticButton = ({ children, onClick, className = "", variant = "primary"
   );
 };
 
+const TelegramIcon = ({ className = "w-4 h-4" }) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    className={className} 
+    fill="currentColor"
+  >
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69.01-.03.01-.14-.07-.2-.08-.06-.19-.04-.27-.02-.12.02-1.96 1.25-5.54 3.69-.52.36-1 .53-1.42.52-.47-.01-1.37-.26-2.03-.48-.82-.27-1.47-.42-1.42-.88.03-.24.35-.49.97-.74 3.79-1.65 6.32-2.73 7.58-3.25 3.61-1.48 4.36-1.74 4.85-1.75.11 0 .35.03.5.16.13.12.17.29.18.41-.01.08-.01.17-.02.26z" />
+  </svg>
+);
+
+const InstagramIcon = ({ className = "w-4 h-4" }) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    className={className} 
+    fill="none" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    strokeLinecap="round" 
+    strokeLinejoin="round"
+  >
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
+
 // ==========================================
 // ==========================================
 // ALL PRODUCTS DATA
@@ -998,9 +1024,10 @@ export default function App() {
                   href="https://www.instagram.com/qalamsamarqand?igsh=ZmZvZzdmOWRqc2V3" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="hover:text-royalBlueLight transition-colors"
+                  className="hover:text-royalBlueLight transition-colors flex items-center gap-2"
                 >
-                  Instagram
+                  <InstagramIcon className="w-4 h-4" />
+                  <span>Instagram</span>
                 </a>
               </li>
               <li>
@@ -1008,9 +1035,10 @@ export default function App() {
                   href="https://t.me/QalamSamarqand" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="hover:text-royalBlueLight transition-colors"
+                  className="hover:text-royalBlueLight transition-colors flex items-center gap-2"
                 >
-                  Telegram
+                  <TelegramIcon className="w-4 h-4" />
+                  <span>Telegram Kanalimiz</span>
                 </a>
               </li>
             </ul>
@@ -1210,21 +1238,23 @@ export default function App() {
                 </div>
                 <div>
                   <span className="block font-mono text-[9px] uppercase tracking-wider text-royalBlue font-bold">// Ijtimoiy tarmoqlar</span>
-                  <span className="text-xs font-medium flex flex-wrap gap-x-4">
+                  <span className="text-xs font-medium flex flex-wrap gap-x-4 gap-y-2">
                     <a 
                       href="https://t.me/QalamSamarqand" 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="hover:text-royalBlue hover:underline transition-colors font-semibold"
+                      className="hover:text-royalBlue hover:underline transition-colors font-semibold flex items-center gap-2"
                     >
+                      <TelegramIcon className="w-4 h-4 text-royalBlue" />
                       Telegram
                     </a>
                     <a 
                       href="https://www.instagram.com/qalamsamarqand?igsh=ZmZvZzdmOWRqc2V3" 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="hover:text-royalBlue hover:underline transition-colors font-semibold"
+                      className="hover:text-royalBlue hover:underline transition-colors font-semibold flex items-center gap-2"
                     >
+                      <InstagramIcon className="w-4 h-4 text-royalBlue" />
                       Instagram
                     </a>
                   </span>
@@ -1441,21 +1471,23 @@ export default function App() {
                 </div>
                 <div>
                   <span className="block font-mono text-[9px] uppercase tracking-wider text-royalBlue font-bold">// Ijtimoiy tarmoqlar</span>
-                  <span className="text-xs font-medium flex flex-wrap gap-x-4">
+                  <span className="text-xs font-medium flex flex-wrap gap-x-4 gap-y-2">
                     <a 
                       href="https://t.me/QalamSamarqand" 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="hover:text-royalBlue hover:underline transition-colors font-semibold"
+                      className="hover:text-royalBlue hover:underline transition-colors font-semibold flex items-center gap-2"
                     >
+                      <TelegramIcon className="w-4 h-4 text-royalBlue" />
                       Telegram
                     </a>
                     <a 
                       href="https://www.instagram.com/qalamsamarqand?igsh=ZmZvZzdmOWRqc2V3" 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="hover:text-royalBlue hover:underline transition-colors font-semibold"
+                      className="hover:text-royalBlue hover:underline transition-colors font-semibold flex items-center gap-2"
                     >
+                      <InstagramIcon className="w-4 h-4 text-royalBlue" />
                       Instagram
                     </a>
                   </span>
@@ -1730,21 +1762,23 @@ export default function App() {
                 </div>
                 <div>
                   <span className="block font-mono text-[9px] uppercase tracking-wider text-royalBlue font-bold">// Ijtimoiy tarmoqlar</span>
-                  <span className="text-xs font-medium flex flex-wrap gap-x-4">
+                  <span className="text-xs font-medium flex flex-wrap gap-x-4 gap-y-2">
                     <a 
                       href="https://t.me/QalamSamarqand" 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="hover:text-royalBlue hover:underline transition-colors font-semibold"
+                      className="hover:text-royalBlue hover:underline transition-colors font-semibold flex items-center gap-2"
                     >
+                      <TelegramIcon className="w-4 h-4 text-royalBlue" />
                       Telegram
                     </a>
                     <a 
                       href="https://www.instagram.com/qalamsamarqand?igsh=ZmZvZzdmOWRqc2V3" 
                       target="_blank" 
                       rel="noopener noreferrer" 
-                      className="hover:text-royalBlue hover:underline transition-colors font-semibold"
+                      className="hover:text-royalBlue hover:underline transition-colors font-semibold flex items-center gap-2"
                     >
+                      <InstagramIcon className="w-4 h-4 text-royalBlue" />
                       Instagram
                     </a>
                   </span>
