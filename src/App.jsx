@@ -909,8 +909,8 @@ export default function App() {
         </div>
 
         <div className="max-w-6xl mx-auto border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-6">
-          <span className="font-mono text-[10px] text-royalBg/30">
-            © 2026 QALAM SAMARQAND. BARCHA HUQUQLAR HIMOYA QILINGAN.
+          <span className="font-mono text-[10px] text-royalBg/40 tracking-wider">
+            © 2019-2026 Qalam Samarqand. Yetti yillik ishonch va oliy sifat.
           </span>
           
           <div className="flex items-center gap-2">
