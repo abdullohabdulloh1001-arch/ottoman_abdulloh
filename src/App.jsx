@@ -85,6 +85,22 @@ const InstagramIcon = ({ className = "w-4 h-4" }) => (
   </svg>
 );
 
+const FavoriteHeart = ({ isFavorite, onClick, className = "" }) => (
+  <button
+    onClick={(e) => {
+      e.stopPropagation();
+      onClick();
+    }}
+    className={`absolute top-3 right-3 z-20 p-2 rounded-full bg-white/90 backdrop-blur-sm border border-royalBlue/10 shadow-sm hover:scale-110 active:scale-95 transition-all duration-300 ${className}`}
+  >
+    <Heart 
+      className={`w-3.5 h-3.5 transition-colors duration-300 ${
+        isFavorite ? 'fill-royalBlue text-royalBlue' : 'text-navyBlue/40 hover:text-navyBlue/60'
+      }`}
+    />
+  </button>
+);
+
 // ==========================================
 // ==========================================
 // ALL PRODUCTS DATA
@@ -116,6 +132,24 @@ export default function App() {
   const [isKitoblarModalOpen, setIsKitoblarModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  
+  const [favorites, setFavorites] = useState(() => {
+    try {
+      const saved = localStorage.getItem('qalam_favorites');
+      return saved ? JSON.parse(saved) : [];
+    } catch (e) {
+      return [];
+    }
+  });
+  const [isFavoritesModalOpen, setIsFavoritesModalOpen] = useState(false);
+
+  const toggleFavorite = (productId) => {
+    setFavorites(prev => {
+      const next = prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId];
+      localStorage.setItem('qalam_favorites', JSON.stringify(next));
+      return next;
+    });
+  };
 
   const filteredProducts = ALL_PRODUCTS.filter(product =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -124,7 +158,7 @@ export default function App() {
 
   // Disable body scroll when any modal is open
   useEffect(() => {
-    if (isUmraModalOpen || isDiniyModalOpen || isKitoblarModalOpen) {
+    if (isUmraModalOpen || isDiniyModalOpen || isKitoblarModalOpen || isFavoritesModalOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -132,7 +166,7 @@ export default function App() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [isUmraModalOpen, isDiniyModalOpen]);
+  }, [isUmraModalOpen, isDiniyModalOpen, isKitoblarModalOpen, isFavoritesModalOpen]);
 
   // Telemetry Typewriter States
   const [telemetryText, setTelemetryText] = useState("");
@@ -383,14 +417,30 @@ export default function App() {
           </a>
 
           {/* Hamburger / Close Menu Button on Mobile */}
-          <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className={`md:hidden p-2 rounded-full transition-colors ${
-              scrolled || isMobileMenuOpen ? 'text-navyBlue hover:bg-navyBlue/5' : 'text-white hover:bg-white/10'
-            }`}
-          >
-            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+          <div className="md:hidden flex items-center gap-2">
+            <button 
+              onClick={() => setIsFavoritesModalOpen(true)}
+              className={`p-2 rounded-full transition-all relative ${
+                scrolled || isMobileMenuOpen ? 'text-navyBlue hover:bg-navyBlue/5' : 'text-white hover:bg-white/10'
+              }`}
+              title="Tanlanganlar"
+            >
+              <Heart className={`w-5 h-5 transition-colors ${favorites.length > 0 ? 'fill-current text-royalBlue' : ''}`} />
+              {favorites.length > 0 && (
+                <span className="absolute -top-1 -right-1 bg-royalBlue text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-pulse">
+                  {favorites.length}
+                </span>
+              )}
+            </button>
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className={`p-2 rounded-full transition-colors ${
+                scrolled || isMobileMenuOpen ? 'text-navyBlue hover:bg-navyBlue/5' : 'text-white hover:bg-white/10'
+              }`}
+            >
+              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+            </button>
+          </div>
         </div>
         
         {/* Navigation Categories (Desktop) */}
@@ -415,8 +465,20 @@ export default function App() {
           </button>
         </div>
         
-        {/* Desktop CTA Button */}
-        <div className="hidden md:block">
+        {/* Desktop CTA Button & Favorites */}
+        <div className="hidden md:flex items-center gap-4">
+          <button 
+            onClick={() => setIsFavoritesModalOpen(true)}
+            className={`hover-lift transition-all duration-300 font-bold flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[10px] tracking-wider uppercase font-mono ${
+              scrolled 
+                ? 'bg-royalBlue/10 border border-royalBlue/20 text-royalBlue hover:bg-royalBlue/20' 
+                : 'bg-white/10 border border-white/20 text-white hover:bg-white/25'
+            }`}
+            title="Tanlanganlar"
+          >
+            <Heart className={`w-3.5 h-3.5 ${favorites.length > 0 ? 'fill-current' : ''}`} />
+            <span>Tanlanganlar ({favorites.length})</span>
+          </button>
           <MagneticButton 
             variant="primary" 
             onClick={handleTelegramRedirect}
@@ -457,6 +519,14 @@ export default function App() {
             >
               <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span>
               Umra Anjomlari
+            </button>
+
+            <button 
+              onClick={() => { setIsFavoritesModalOpen(true); setIsMobileMenuOpen(false); }}
+              className="font-mono text-xs font-bold text-royalBlue bg-royalBlue/10 border border-royalBlue/20 px-4 py-2.5 rounded-full flex items-center justify-center gap-2 self-start"
+            >
+              <Heart className="w-3.5 h-3.5 fill-current" />
+              Tanlanganlar ({favorites.length})
             </button>
 
             <button
@@ -592,6 +662,10 @@ export default function App() {
                   <div key={product.id} className="bg-white border border-royalBorder rounded-5xl p-6 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
                     <div>
                       <div className="h-48 w-full overflow-hidden rounded-3xl mb-6 relative flex items-center justify-center bg-royalBg">
+                        <FavoriteHeart 
+                          isFavorite={favorites.includes(product.id)} 
+                          onClick={() => toggleFavorite(product.id)} 
+                        />
                         <img 
                           src={product.image} 
                           alt={product.name} 
@@ -953,6 +1027,10 @@ export default function App() {
               <div className="bg-white border border-royalBorder rounded-5xl p-6 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
                 <div>
                   <div className="h-56 w-full overflow-hidden rounded-3xl mb-6 relative">
+                    <FavoriteHeart 
+                      isFavorite={favorites.includes('u1')} 
+                      onClick={() => toggleFavorite('u1')} 
+                    />
                     <img 
                       src="/images/umra_ekonom.jpg" 
                       alt="Ekonom To'plam" 
@@ -990,6 +1068,10 @@ export default function App() {
                 </div>
                 <div>
                   <div className="h-56 w-full overflow-hidden rounded-3xl mb-6 relative">
+                    <FavoriteHeart 
+                      isFavorite={favorites.includes('u2')} 
+                      onClick={() => toggleFavorite('u2')} 
+                    />
                     <img 
                       src="/images/umra_standart.jpg" 
                       alt="Standart To'plam" 
@@ -1027,6 +1109,10 @@ export default function App() {
                 </div>
                 <div>
                   <div className="h-56 w-full overflow-hidden rounded-3xl mb-6 relative">
+                    <FavoriteHeart 
+                      isFavorite={favorites.includes('u3')} 
+                      onClick={() => toggleFavorite('u3')} 
+                    />
                     <img 
                       src="/images/umra_premium.jpg" 
                       alt="Premium To'plam" 
@@ -1152,6 +1238,10 @@ export default function App() {
               <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
                 <div>
                   <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <FavoriteHeart 
+                      isFavorite={favorites.includes('b1')} 
+                      onClick={() => toggleFavorite('b1')} 
+                    />
                     <img 
                       src="/images/kitob_hadis_toplam.jpg" 
                       alt="Hadislar to'plami" 
@@ -1181,6 +1271,10 @@ export default function App() {
               <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
                 <div>
                   <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <FavoriteHeart 
+                      isFavorite={favorites.includes('b2')} 
+                      onClick={() => toggleFavorite('b2')} 
+                    />
                     <img 
                       src="/images/kitob_365_duo.jpg" 
                       alt="365 kunda duo" 
@@ -1210,6 +1304,10 @@ export default function App() {
               <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
                 <div>
                   <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <FavoriteHeart 
+                      isFavorite={favorites.includes('b3')} 
+                      onClick={() => toggleFavorite('b3')} 
+                    />
                     <img 
                       src="/images/kitob_365_hadis.jpg" 
                       alt="365 kunda hadis" 
@@ -1239,6 +1337,10 @@ export default function App() {
               <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
                 <div>
                   <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <FavoriteHeart 
+                      isFavorite={favorites.includes('b4')} 
+                      onClick={() => toggleFavorite('b4')} 
+                    />
                     <img 
                       src="/images/kitob_paygambar_taniyman.jpg" 
                       alt="Payg'ambarimni taniyman" 
@@ -1268,6 +1370,10 @@ export default function App() {
               <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
                 <div>
                   <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <FavoriteHeart 
+                      isFavorite={favorites.includes('b5')} 
+                      onClick={() => toggleFavorite('b5')} 
+                    />
                     <img 
                       src="/images/kitob_paygambarlar_qissasi.jpg" 
                       alt="Payg'ambarlar qissasi" 
@@ -1385,6 +1491,10 @@ export default function App() {
               <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
                 <div>
                   <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <FavoriteHeart 
+                      isFavorite={favorites.includes('k1')} 
+                      onClick={() => toggleFavorite('k1')} 
+                    />
                     <img 
                       src="/images/kitob_er_xotin.jpg" 
                       alt="Er-xotinga nasihat" 
@@ -1414,6 +1524,10 @@ export default function App() {
               <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
                 <div>
                   <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <FavoriteHeart 
+                      isFavorite={favorites.includes('k2')} 
+                      onClick={() => toggleFavorite('k2')} 
+                    />
                     <img 
                       src="/images/kitob_jannat_bostoni.jpg" 
                       alt="Jannat bo'stonidagi oilaviy oqshomlar" 
@@ -1443,6 +1557,10 @@ export default function App() {
               <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
                 <div>
                   <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <FavoriteHeart 
+                      isFavorite={favorites.includes('k3')} 
+                      onClick={() => toggleFavorite('k3')} 
+                    />
                     <img 
                       src="/images/kitob_oqshom_gozalliklari.jpg" 
                       alt="Oqshom go'zalliklari" 
@@ -1472,6 +1590,10 @@ export default function App() {
               <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
                 <div>
                   <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <FavoriteHeart 
+                      isFavorite={favorites.includes('k4')} 
+                      onClick={() => toggleFavorite('k4')} 
+                    />
                     <img 
                       src="/images/kitob_qalbi_singanlarga.jpg" 
                       alt="Qalbi singanlarga" 
@@ -1501,6 +1623,10 @@ export default function App() {
               <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
                 <div>
                   <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <FavoriteHeart 
+                      isFavorite={favorites.includes('k5')} 
+                      onClick={() => toggleFavorite('k5')} 
+                    />
                     <img 
                       src="/images/kitob_binafsha_1.jpg" 
                       alt="Binafsha shu'lasi" 
@@ -1530,6 +1656,10 @@ export default function App() {
               <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
                 <div>
                   <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <FavoriteHeart 
+                      isFavorite={favorites.includes('k6')} 
+                      onClick={() => toggleFavorite('k6')} 
+                    />
                     <img 
                       src="/images/kitob_binafsha_2.jpg" 
                       alt="Binafsha shu'lasi 2" 
@@ -1559,6 +1689,10 @@ export default function App() {
               <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
                 <div>
                   <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                    <FavoriteHeart 
+                      isFavorite={favorites.includes('k7')} 
+                      onClick={() => toggleFavorite('k7')} 
+                    />
                     <img 
                       src="/images/kitob_qurondan_maktublar.jpg" 
                       alt="Qur'ondan maktublar" 
@@ -1640,6 +1774,92 @@ export default function App() {
                 </div>
               </div>
             </div>
+
+          </div>
+        </div>
+      )}
+
+      {/* Premium Overlay Modal for Favorites (Tanlanganlar) */}
+      {isFavoritesModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-navyBlue/60 backdrop-blur-md p-4 animate-fade-in">
+          <div className="bg-royalBg border border-royalBlue/10 rounded-[1.5rem] md:rounded-[2.5rem] w-full max-w-2xl max-h-[96vh] md:max-h-[85vh] overflow-y-auto shadow-2xl relative p-4 sm:p-6 md:p-8 animate-scale-up">
+            
+            {/* Modal Header */}
+            <div className="flex justify-between items-start mb-6 pb-4 border-b border-royalBorder">
+              <div>
+                <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-royalBlue border border-royalBlue/20 rounded-full px-4 py-1.5 bg-royalBlueLight/30 font-bold">
+                  Sizning To'plamingiz
+                </span>
+                <h2 className="text-xl md:text-3xl font-bold font-serif text-navyBlue mt-3">
+                  Tanlangan Mahsulotlar
+                </h2>
+              </div>
+              <button 
+                onClick={() => setIsFavoritesModalOpen(false)}
+                className="bg-navyBlue/5 hover:bg-navyBlue/10 text-navyBlue p-2 sm:p-3 rounded-full transition-all flex items-center gap-1 sm:gap-1.5 font-mono text-[8px] sm:text-[10px] tracking-wider uppercase font-bold"
+              >
+                <X className="w-4 h-4" />
+                <span>Yopish</span>
+              </button>
+            </div>
+
+            {/* Favorites List */}
+            {favorites.length > 0 ? (
+              <div className="space-y-4">
+                <div className="divide-y divide-royalBorder max-h-[45vh] overflow-y-auto pr-2">
+                  {favorites.map(id => {
+                    const product = ALL_PRODUCTS.find(p => p.id === id);
+                    if (!product) return null;
+                    return (
+                      <div key={id} className="py-4 flex items-center justify-between gap-4 group">
+                        <div className="flex items-center gap-3">
+                          <div className="h-16 w-16 overflow-hidden rounded-xl border border-royalBorder bg-white flex items-center justify-center flex-shrink-0">
+                            <img src={product.image} alt={product.name} className="max-h-full max-w-full object-contain" />
+                          </div>
+                          <div>
+                            <span className="font-mono text-[8px] uppercase tracking-wider text-royalBlue bg-royalBlueLight/40 px-2 py-0.5 rounded">{product.category}</span>
+                            <h4 className="text-sm font-serif font-bold text-navyBlue mt-1">{product.name}</h4>
+                            <div className="font-mono text-xs text-navyBlue/60 mt-0.5">{product.price} so'm</div>
+                          </div>
+                        </div>
+                        <button 
+                          onClick={() => toggleFavorite(id)}
+                          className="p-2 rounded-full hover:bg-red-50 text-navyBlue/30 hover:text-red-500 transition-colors flex-shrink-0"
+                          title="O'chirish"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Checkout Section */}
+                <div className="border-t border-royalBorder pt-6 mt-6 space-y-4">
+                  <div className="flex justify-between items-center font-serif text-lg font-bold text-navyBlue">
+                    <span>Jami tanlangan:</span>
+                    <span>{favorites.length} ta mahsulot</span>
+                  </div>
+                  
+                  <button
+                    onClick={() => {
+                      const favoritedProducts = favorites.map(id => ALL_PRODUCTS.find(p => p.id === id)).filter(Boolean);
+                      const listText = favoritedProducts.map((p, idx) => `${idx + 1}. ${p.name} - ${p.price} so'm`).join('\n');
+                      const message = `Assalomu alaykum! Men quyidagi mahsulotlarni tanladim va sotib olmoqchiman:\n\n${listText}\n\nHammasi mavjudmi?`;
+                      window.open(`https://t.me/Abdurafiq_A?text=${encodeURIComponent(message)}`, '_blank');
+                    }}
+                    className="w-full bg-royalBlue hover:bg-navyBlue text-white font-mono text-xs tracking-widest uppercase py-4 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:scale-[1.01]"
+                  >
+                    Tanlanganlar bo'yicha buyurtma berish <ArrowRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className="py-12 text-center space-y-4">
+                <Heart className="w-12 h-12 text-navyBlue/20 mx-auto" />
+                <p className="text-slateMuted font-light text-sm">Hozircha tanlangan mahsulotlar yo'q. Mahsulotlar yonidagi yurakcha tugmasi orqali ularni bu yerga qo'shishingiz mumkin.</p>
+              </div>
+            )}
 
           </div>
         </div>
