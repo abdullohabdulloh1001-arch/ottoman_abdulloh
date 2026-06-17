@@ -489,15 +489,12 @@ export default function App() {
           <span className="hero-fade-up font-mono text-[10px] md:text-xs tracking-[0.3em] uppercase text-sky-300 mb-4 block font-bold">
             Premium Kitoblar va Sovg'alar Do'koni
           </span>
-          <h1 className="hero-fade-up text-3xl sm:text-4xl md:text-6xl font-bold tracking-tight text-white leading-[1.1] mb-6">
-            Sizga bozordan ham yaqinroq va
-            <span className="hero-fade-up block font-drama text-sky-200 text-4xl sm:text-6xl md:text-7xl lg:text-8xl mt-2 font-normal">
-              hamyonboproq.
+          <h1 className="hero-fade-up text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-white leading-[1.2] mb-8 drop-shadow-[0_4px_12px_rgba(7,19,36,0.6)]">
+            Yuksak sifat va qulay narxlar
+            <span className="hero-fade-up block font-drama text-sky-200 text-4xl sm:text-5xl md:text-6xl lg:text-7xl mt-3 font-normal">
+              uyg'unligi — siz uchun.
             </span>
           </h1>
-          <p className="hero-fade-up text-sm md:text-base text-white/80 max-w-xl mb-8 leading-relaxed font-light">
-            Eksklyuziv she'riyat devonlari, tarixiy yilnomalar, muqaddas diniy adabiyotlar va saralangan sovg'a to'plamlari do'koni. O'zbekiston madaniy merosining eng go'zal durdonalari.
-          </p>
           <div className="hero-fade-up flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
             <MagneticButton onClick={handleTelegramRedirect} className="bg-royalBlue text-white hover:bg-navyBlue">
               Telegram orqali bog'lanish
