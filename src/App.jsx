@@ -21,7 +21,8 @@ import {
   Book,
   Heart,
   MapPin,
-  Truck
+  Truck,
+  Search
 } from 'lucide-react';
 
 // Register GSAP plugins
@@ -58,12 +59,32 @@ const MagneticButton = ({ children, onClick, className = "", variant = "primary"
 };
 
 // ==========================================
+// ==========================================
+// ALL PRODUCTS DATA
+// ==========================================
+const ALL_PRODUCTS = [
+  { id: 'b1', name: "Hadislar to'plami", price: "50 000", image: "/images/kitob_hadis_toplam.jpg", category: "Diniy Kitoblar" },
+  { id: 'b2', name: "365 kunda duo", price: "105 000", image: "/images/kitob_365_duo.jpg", category: "Diniy Kitoblar" },
+  { id: 'b3', name: "365 kunda hadis", price: "105 000", image: "/images/kitob_365_hadis.jpg", category: "Diniy Kitoblar" },
+  { id: 'b4', name: "Payg'ambarimni taniyman", price: "107 000", image: "/images/kitob_paygambar_taniyman.jpg", category: "Diniy Kitoblar" },
+  { id: 'b5', name: "Payg'ambarlar qissasi", price: "110 000", image: "/images/kitob_paygambarlar_qissasi.jpg", category: "Diniy Kitoblar" },
+  { id: 'u1', name: "Ekonom To'plam", price: "1 000 000", image: "/images/umra_ekonom.jpg", category: "Umra Anjomlari" },
+  { id: 'u2', name: "Standart To'plam", price: "1 500 000", image: "/images/umra_standart.jpg", category: "Umra Anjomlari" },
+  { id: 'u3', name: "Premium To'plam", price: "2 000 000", image: "/images/umra_premium.jpg", category: "Umra Anjomlari" }
+];
+
 // MAIN APP COMPONENT
 // ==========================================
 export default function App() {
   const [scrolled, setScrolled] = useState(false);
   const [isUmraModalOpen, setIsUmraModalOpen] = useState(false);
   const [isDiniyModalOpen, setIsDiniyModalOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const filteredProducts = ALL_PRODUCTS.filter(product =>
+    product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    product.category.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   // Disable body scroll when any modal is open
   useEffect(() => {
@@ -364,8 +385,8 @@ export default function App() {
         <div className={`hidden md:flex items-center gap-5 lg:gap-7 font-mono text-[9px] lg:text-[10px] tracking-[0.15em] uppercase transition-colors duration-500 ${
           scrolled ? 'text-navyBlue/70' : 'text-white/95'
         }`}>
-          <a href="#kitoblar" className={`hover-lift transition-colors font-medium ${scrolled ? 'hover:text-royalBlue' : 'hover:text-sky-300'}`}>Kitoblar</a>
-          <a href="#tarixiy-kitoblar" className={`hover-lift transition-colors font-medium ${scrolled ? 'hover:text-royalBlue' : 'hover:text-sky-300'}`}>Tarixiy Kitoblar</a>
+          <a href="#kitoblar" className={`hover-lift transition-colors font-medium ${scrolled ? 'hover:text-royalBlue' : 'hover:text-sky-300'}`}>Katalog</a>
+          <a href="#tarixiy-kitoblar" className={`hover-lift transition-colors font-medium ${scrolled ? 'hover:text-royalBlue' : 'hover:text-sky-300'}`}>KITOBLAR</a>
           <a href="#diniy-kitoblar" className={`hover-lift transition-colors font-medium ${scrolled ? 'hover:text-royalBlue' : 'hover:text-sky-300'}`}>Diniy Kitoblar</a>
           <a href="#sovg'alar" className={`hover-lift transition-colors font-medium ${scrolled ? 'hover:text-royalBlue' : 'hover:text-sky-300'}`}>Sovg'alar</a>
           
@@ -472,7 +493,7 @@ export default function App() {
 
       {/* DYNAMIC CATEGORY SHOWCASE (Tarixiy, Diniy, Sovg'alar, Umra Anjomlari) */}
       <section id="kitoblar" className="py-24 md:py-36 px-6 md:px-12 max-w-7xl mx-auto">
-        <div className="text-center mb-16 md:mb-24">
+        <div className="text-center mb-12">
           <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-royalBlue border border-royalBlue/20 rounded-full px-4 py-1.5 bg-royalBlueLight/30 font-bold">
             Do'kon Kolleksiyalari
           </span>
@@ -484,107 +505,174 @@ export default function App() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch">
-          
-          {/* Card 1: Tarixiy Kitoblar */}
-          <div className="bg-white border border-royalBorder rounded-5xl p-6 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
-            <div>
-              <div className="h-48 w-full overflow-hidden rounded-3xl mb-6 relative">
-                <img 
-                  src="/images/tarixiy.jpg" 
-                  alt="Tarixiy Kitoblar" 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-              <h3 className="text-xl font-serif font-bold text-navyBlue mb-3">Tarixiy Kitoblar</h3>
-              <p className="text-xs md:text-sm text-slateMuted font-light leading-relaxed mb-6">
-                Tariximiz va buyuk ajdodlarimiz merosini yorituvchi nodir manbalar.
-              </p>
-            </div>
-            <button
-              onClick={handleTelegramRedirect}
-              className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[10px] tracking-widest uppercase py-3.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02]"
-            >
-              Ko'rish va Buyurtma Berish <ArrowRight className="w-4 h-4" />
-            </button>
+        {/* Live Search Bar */}
+        <div className="max-w-md mx-auto mb-16 relative">
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Kitob yoki mahsulot nomini kiriting..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full px-6 py-4 pl-12 bg-white border-2 border-navyBlue/20 rounded-full font-serif text-sm text-navyBlue placeholder-navyBlue/40 focus:outline-none focus:border-royalBlue focus:ring-1 focus:ring-royalBlue transition-all duration-300 shadow-md"
+            />
+            <Search className="w-5 h-5 text-navyBlue/50 absolute left-4.5 top-1/2 -translate-y-1/2" />
+            {searchQuery && (
+              <button 
+                onClick={() => setSearchQuery("")} 
+                className="absolute right-4.5 top-1/2 -translate-y-1/2 text-navyBlue/50 hover:text-navyBlue transition-colors"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
-
-          {/* Card 2: Diniy Kitoblar */}
-          <div className="bg-white border border-royalBorder rounded-5xl p-6 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
-            <div>
-              <div className="h-48 w-full overflow-hidden rounded-3xl mb-6 relative">
-                <img 
-                  src="/images/diniy.jpg" 
-                  alt="Diniy Kitoblar" 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-              <h3 className="text-xl font-serif font-bold text-navyBlue mb-3">Diniy Kitoblar</h3>
-              <p className="text-xs md:text-sm text-slateMuted font-light leading-relaxed mb-6">
-                Ma'naviy va ilmiy qadriyatlarimizni o'rganish uchun mo'ljallangan asarlar.
-              </p>
-            </div>
-            <button
-              onClick={() => setIsDiniyModalOpen(true)}
-              className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[10px] tracking-widest uppercase py-3.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02]"
-            >
-              Ko'rish va Buyurtma Berish <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Card 3: Premium Sovg'alar */}
-          <div className="bg-white border border-royalBorder rounded-5xl p-6 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
-            <div>
-              <div className="h-48 w-full overflow-hidden rounded-3xl mb-6 relative">
-                <img 
-                  src="/images/sovgalar.jpg" 
-                  alt="Premium Sovg'alar" 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-              <h3 className="text-xl font-serif font-bold text-navyBlue mb-3">Premium Sovg'alar</h3>
-              <p className="text-xs md:text-sm text-slateMuted font-light leading-relaxed mb-6">
-                Yaqinlaringiz uchun nafis va qadrli bo'lgan maxsus hadyalar to'plami.
-              </p>
-            </div>
-            <button
-              onClick={handleTelegramRedirect}
-              className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[10px] tracking-widest uppercase py-3.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02]"
-            >
-              Ko'rish va Buyurtma Berish <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
-          {/* Card 4: Umra Anjomlari (Visual Distinct / Highly Highlighted) */}
-          <div className="bg-white border-2 border-amber-500 shadow-xl shadow-amber-500/5 rounded-5xl p-6 hover:shadow-2xl hover:border-amber-600 transition-all duration-500 flex flex-col justify-between group relative">
-            <div>
-              <div className="h-48 w-full overflow-hidden rounded-3xl mb-6 relative">
-                <span className="absolute top-4 right-4 z-10 bg-amber-500 text-navyBlue font-mono text-[9px] tracking-wider uppercase font-bold px-3 py-1 rounded-full shadow-md">
-                  MAXSUS TO'PLAM
-                </span>
-                <img 
-                  src="/images/umra.jpg" 
-                  alt="Umra Anjomlari" 
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-              </div>
-              <h3 className="text-xl font-serif font-bold text-navyBlue mb-3 flex items-center gap-2">
-                Umra Anjomlari 
-                <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
-              </h3>
-              <p className="text-xs md:text-sm text-slateMuted font-light leading-relaxed mb-6">
-                Muborak safarga otlanganlar uchun eng kerakli va yuqori sifatli to'plamlar.
-              </p>
-            </div>
-            <button
-              onClick={() => setIsUmraModalOpen(true)}
-              className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[10px] tracking-widest uppercase py-3.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02]"
-            >
-              Ko'rish va Buyurtma Berish <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
-
         </div>
+
+        {searchQuery.trim() !== "" ? (
+          /* Live Search Results */
+          <div>
+            <div className="mb-8 font-mono text-xs text-slateMuted tracking-wider uppercase">
+              Qidiruv natijalari ({filteredProducts.length})
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+              {filteredProducts.length > 0 ? (
+                filteredProducts.map(product => (
+                  <div key={product.id} className="bg-white border border-royalBorder rounded-5xl p-6 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
+                    <div>
+                      <div className="h-48 w-full overflow-hidden rounded-3xl mb-6 relative flex items-center justify-center bg-royalBg">
+                        <img 
+                          src={product.image} 
+                          alt={product.name} 
+                          className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
+                        />
+                      </div>
+                      <span className="font-mono text-[9px] tracking-wider uppercase text-royalBlue bg-royalBlueLight/50 px-2.5 py-1 rounded-full">{product.category}</span>
+                      <h3 className="text-lg font-serif font-bold text-navyBlue mt-3 mb-2">{product.name}</h3>
+                      
+                      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-4">
+                        <span>Narxi:</span>
+                        <span className="text-navyBlue text-sm font-extrabold">{product.price}</span>
+                        <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => window.open(getTelegramPurchaseLink(product.name, product.image), '_blank')}
+                      className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[10px] tracking-widest uppercase py-3.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02]"
+                    >
+                      Buyurtma berish <ArrowRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                ))
+              ) : (
+                <div className="col-span-full text-center py-12">
+                  <p className="text-slateMuted font-light">Bunday mahsulot topilmadi.</p>
+                </div>
+              )}
+            </div>
+          </div>
+        ) : (
+          /* Standard Categories Grid */
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch">
+            
+            {/* Card 1: Kitoblar */}
+            <div className="bg-white border border-royalBorder rounded-5xl p-6 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
+              <div>
+                <div className="h-48 w-full overflow-hidden rounded-3xl mb-6 relative">
+                  <img 
+                    src="/images/tarixiy.jpg" 
+                    alt="Kitoblar" 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+                <h3 className="text-xl font-serif font-bold text-navyBlue mb-3">Kitoblar</h3>
+                <p className="text-xs md:text-sm text-slateMuted font-light leading-relaxed mb-6">
+                  Siz izlagan barcha turdagi ma'naviy, ilmiy va tarixiy kitoblar to'plami.
+                </p>
+              </div>
+              <button
+                onClick={handleTelegramRedirect}
+                className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[10px] tracking-widest uppercase py-3.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02]"
+              >
+                Ko'rish va Buyurtma Berish <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Card 2: Diniy Kitoblar */}
+            <div className="bg-white border border-royalBorder rounded-5xl p-6 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
+              <div>
+                <div className="h-48 w-full overflow-hidden rounded-3xl mb-6 relative">
+                  <img 
+                    src="/images/diniy.jpg" 
+                    alt="Diniy Kitoblar" 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+                <h3 className="text-xl font-serif font-bold text-navyBlue mb-3">Diniy Kitoblar</h3>
+                <p className="text-xs md:text-sm text-slateMuted font-light leading-relaxed mb-6">
+                  Ma'naviy va ilmiy qadriyatlarimizni o'rganish uchun mo'ljallangan asarlar.
+                </p>
+              </div>
+              <button
+                onClick={() => setIsDiniyModalOpen(true)}
+                className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[10px] tracking-widest uppercase py-3.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02]"
+              >
+                Ko'rish va Buyurtma Berish <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Card 3: Premium Sovg'alar */}
+            <div className="bg-white border border-royalBorder rounded-5xl p-6 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
+              <div>
+                <div className="h-48 w-full overflow-hidden rounded-3xl mb-6 relative">
+                  <img 
+                    src="/images/sovgalar.jpg" 
+                    alt="Premium Sovg'alar" 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+                <h3 className="text-xl font-serif font-bold text-navyBlue mb-3">Premium Sovg'alar</h3>
+                <p className="text-xs md:text-sm text-slateMuted font-light leading-relaxed mb-6">
+                  Yaqinlaringiz uchun nafis va qadrli bo'lgan maxsus hadyalar to'plami.
+                </p>
+              </div>
+              <button
+                onClick={handleTelegramRedirect}
+                className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[10px] tracking-widest uppercase py-3.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02]"
+              >
+                Ko'rish va Buyurtma Berish <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Card 4: Umra Anjomlari (Visual Distinct / Highly Highlighted) */}
+            <div className="bg-white border-2 border-amber-500 shadow-xl shadow-amber-500/5 rounded-5xl p-6 hover:shadow-2xl hover:border-amber-600 transition-all duration-500 flex flex-col justify-between group relative">
+              <div>
+                <div className="h-48 w-full overflow-hidden rounded-3xl mb-6 relative">
+                  <span className="absolute top-4 right-4 z-10 bg-amber-500 text-navyBlue font-mono text-[9px] tracking-wider uppercase font-bold px-3 py-1 rounded-full shadow-md">
+                    MAXSUS TO'PLAM
+                  </span>
+                  <img 
+                    src="/images/umra.jpg" 
+                    alt="Umra Anjomlari" 
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                </div>
+                <h3 className="text-xl font-serif font-bold text-navyBlue mb-3 flex items-center gap-2">
+                  Umra Anjomlari 
+                  <span className="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse"></span>
+                </h3>
+                <p className="text-xs md:text-sm text-slateMuted font-light leading-relaxed mb-6">
+                  Muborak safarga otlanganlar uchun eng kerakli va yuqori sifatli to'plamlar.
+                </p>
+              </div>
+              <button
+                onClick={() => setIsUmraModalOpen(true)}
+                className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[10px] tracking-widest uppercase py-3.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02]"
+              >
+                Ko'rish va Buyurtma Berish <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
+
+          </div>
+        )}
       </section>
 
       {/* Umra packages are now available inside the overlay modal popup */}
@@ -822,8 +910,8 @@ export default function App() {
           <div>
             <h4 className="font-mono text-xs text-royalBg/80 tracking-widest uppercase mb-4">Kategoriyalar</h4>
             <ul className="space-y-2 font-mono text-[10px] text-royalBg/40 uppercase tracking-widest">
-              <li><a href="#kitoblar" className="hover:text-royalBlueLight transition-colors">Kitoblar</a></li>
-              <li><a href="#tarixiy-kitoblar" className="hover:text-royalBlueLight transition-colors">Tarixiy Kitoblar</a></li>
+              <li><a href="#kitoblar" className="hover:text-royalBlueLight transition-colors">Katalog</a></li>
+              <li><a href="#tarixiy-kitoblar" className="hover:text-royalBlueLight transition-colors">KITOBLAR</a></li>
               <li><a href="#diniy-kitoblar" className="hover:text-royalBlueLight transition-colors">Diniy Kitoblar</a></li>
               <li><a href="#sovg'alar" className="hover:text-royalBlueLight transition-colors">Sovg'alar</a></li>
             </ul>
