@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://qalamsamarqand.vercel.app/sitemap.xml
