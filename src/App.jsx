@@ -971,7 +971,7 @@ export default function App() {
 
       {/* FOOTER */}
       <footer className="bg-navyBlue text-white rounded-t-[3rem] md:rounded-t-[4rem] pt-20 pb-12 px-6 md:px-12 relative z-20">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-12 mb-16">
           <div className="md:col-span-2 space-y-4">
             <h3 className="font-serif text-xl md:text-2xl font-bold text-royalBg tracking-wider flex items-center gap-3">
               <img src="/logo.png" alt="Qalam logo" className="h-8 w-8 rounded-full border border-royalBlueLight/20 object-cover bg-white" />
@@ -988,6 +988,31 @@ export default function App() {
               <li><a href="#tarixiy-kitoblar" className="hover:text-royalBlueLight transition-colors">KITOBLAR</a></li>
               <li><a href="#diniy-kitoblar" className="hover:text-royalBlueLight transition-colors">Diniy Kitoblar</a></li>
               <li><a href="#sovg'alar" className="hover:text-royalBlueLight transition-colors">Sovg'alar</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-mono text-xs text-royalBg/80 tracking-widest uppercase mb-4">Ijtimoiy Tarmoqlar</h4>
+            <ul className="space-y-2 font-mono text-[10px] text-royalBg/40 uppercase tracking-widest">
+              <li>
+                <a 
+                  href="https://www.instagram.com/qalamsamarqand?igsh=ZmZvZzdmOWRqc2V3" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="hover:text-royalBlueLight transition-colors"
+                >
+                  Instagram
+                </a>
+              </li>
+              <li>
+                <a 
+                  href="https://t.me/QalamSamarqand" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="hover:text-royalBlueLight transition-colors"
+                >
+                  Telegram
+                </a>
+              </li>
             </ul>
           </div>
           <div>
@@ -1153,6 +1178,60 @@ export default function App() {
               </div>
 
             </div>
+
+            {/* Store Information Footer */}
+            <div className="mt-10 p-6 rounded-3xl bg-royalBlueLight/30 border border-royalBlue/10 grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="flex items-center gap-3.5 text-navyBlue">
+                <div className="p-3 bg-white rounded-full border border-royalBlue/15 shadow-sm text-royalBlue flex-shrink-0">
+                  <MapPin className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="block font-mono text-[9px] uppercase tracking-wider text-royalBlue font-bold">// Bizning Manzil</span>
+                  <span className="text-xs font-medium">Samarqand shahar, Registon non bozorchasi ro'parasidagi "Qalam" kitoblar do'koni</span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3.5 text-navyBlue">
+                <div className="p-3 bg-white rounded-full border border-royalBlue/15 shadow-sm text-royalBlue flex-shrink-0">
+                  <Phone className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="block font-mono text-[9px] uppercase tracking-wider text-royalBlue font-bold">// Telefon raqamlar</span>
+                  <span className="text-xs font-medium flex flex-col sm:flex-row sm:gap-x-4">
+                    <a href="tel:+998979162526" className="hover:text-royalBlue hover:underline transition-colors font-mono font-bold">+998 (97) 916 25 26</a>
+                    <a href="tel:+998970252600" className="hover:text-royalBlue hover:underline transition-colors font-mono font-bold">+998 (97) 025 26 00</a>
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3.5 text-navyBlue">
+                <div className="p-3 bg-white rounded-full border border-royalBlue/15 shadow-sm text-royalBlue flex-shrink-0">
+                  <MessageSquare className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="block font-mono text-[9px] uppercase tracking-wider text-royalBlue font-bold">// Ijtimoiy tarmoqlar</span>
+                  <span className="text-xs font-medium flex flex-wrap gap-x-4">
+                    <a 
+                      href="https://t.me/QalamSamarqand" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="hover:text-royalBlue hover:underline transition-colors font-semibold"
+                    >
+                      Telegram
+                    </a>
+                    <a 
+                      href="https://www.instagram.com/qalamsamarqand?igsh=ZmZvZzdmOWRqc2V3" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="hover:text-royalBlue hover:underline transition-colors font-semibold"
+                    >
+                      Instagram
+                    </a>
+                  </span>
+                </div>
+              </div>
+            </div>
+
           </div>
         </div>
       )}
@@ -1332,7 +1411,7 @@ export default function App() {
             </div>
 
             {/* Store Information Footer */}
-            <div className="mt-10 p-6 rounded-3xl bg-royalBlueLight/30 border border-royalBlue/10 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-6">
+            <div className="mt-10 p-6 rounded-3xl bg-royalBlueLight/30 border border-royalBlue/10 grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="flex items-center gap-3.5 text-navyBlue">
                 <div className="p-3 bg-white rounded-full border border-royalBlue/15 shadow-sm text-royalBlue flex-shrink-0">
                   <MapPin className="w-5 h-5" />
@@ -1349,9 +1428,36 @@ export default function App() {
                 </div>
                 <div>
                   <span className="block font-mono text-[9px] uppercase tracking-wider text-royalBlue font-bold">// Telefon raqamlar</span>
-                  <span className="text-xs font-medium flex flex-wrap gap-x-4">
+                  <span className="text-xs font-medium flex flex-col sm:flex-row sm:gap-x-4">
                     <a href="tel:+998979162526" className="hover:text-royalBlue hover:underline transition-colors font-mono font-bold">+998 (97) 916 25 26</a>
                     <a href="tel:+998970252600" className="hover:text-royalBlue hover:underline transition-colors font-mono font-bold">+998 (97) 025 26 00</a>
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3.5 text-navyBlue">
+                <div className="p-3 bg-white rounded-full border border-royalBlue/15 shadow-sm text-royalBlue flex-shrink-0">
+                  <MessageSquare className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="block font-mono text-[9px] uppercase tracking-wider text-royalBlue font-bold">// Ijtimoiy tarmoqlar</span>
+                  <span className="text-xs font-medium flex flex-wrap gap-x-4">
+                    <a 
+                      href="https://t.me/QalamSamarqand" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="hover:text-royalBlue hover:underline transition-colors font-semibold"
+                    >
+                      Telegram
+                    </a>
+                    <a 
+                      href="https://www.instagram.com/qalamsamarqand?igsh=ZmZvZzdmOWRqc2V3" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="hover:text-royalBlue hover:underline transition-colors font-semibold"
+                    >
+                      Instagram
+                    </a>
                   </span>
                 </div>
               </div>
@@ -1594,7 +1700,7 @@ export default function App() {
             </div>
 
             {/* Store Information Footer */}
-            <div className="mt-10 p-6 rounded-3xl bg-royalBlueLight/30 border border-royalBlue/10 flex flex-col md:flex-row justify-between items-stretch md:items-center gap-6">
+            <div className="mt-10 p-6 rounded-3xl bg-royalBlueLight/30 border border-royalBlue/10 grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="flex items-center gap-3.5 text-navyBlue">
                 <div className="p-3 bg-white rounded-full border border-royalBlue/15 shadow-sm text-royalBlue flex-shrink-0">
                   <MapPin className="w-5 h-5" />
@@ -1611,9 +1717,36 @@ export default function App() {
                 </div>
                 <div>
                   <span className="block font-mono text-[9px] uppercase tracking-wider text-royalBlue font-bold">// Telefon raqamlar</span>
-                  <span className="text-xs font-medium flex flex-wrap gap-x-4">
+                  <span className="text-xs font-medium flex flex-col sm:flex-row sm:gap-x-4">
                     <a href="tel:+998979162526" className="hover:text-royalBlue hover:underline transition-colors font-mono font-bold">+998 (97) 916 25 26</a>
                     <a href="tel:+998970252600" className="hover:text-royalBlue hover:underline transition-colors font-mono font-bold">+998 (97) 025 26 00</a>
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-3.5 text-navyBlue">
+                <div className="p-3 bg-white rounded-full border border-royalBlue/15 shadow-sm text-royalBlue flex-shrink-0">
+                  <MessageSquare className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="block font-mono text-[9px] uppercase tracking-wider text-royalBlue font-bold">// Ijtimoiy tarmoqlar</span>
+                  <span className="text-xs font-medium flex flex-wrap gap-x-4">
+                    <a 
+                      href="https://t.me/QalamSamarqand" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="hover:text-royalBlue hover:underline transition-colors font-semibold"
+                    >
+                      Telegram
+                    </a>
+                    <a 
+                      href="https://www.instagram.com/qalamsamarqand?igsh=ZmZvZzdmOWRqc2V3" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="hover:text-royalBlue hover:underline transition-colors font-semibold"
+                    >
+                      Instagram
+                    </a>
                   </span>
                 </div>
               </div>
