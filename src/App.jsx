@@ -178,7 +178,6 @@ export default function App() {
   const [isSchedulerBooked, setIsSchedulerBooked] = useState(false);
 
   // Stacking Protocol Ref
-  const protocolContainerRef = useRef(null);
   const philosophySectionRef = useRef(null);
 
   const TELEGRAM_LINK = "https://t.me/Abdurafiq_A";
@@ -282,41 +281,6 @@ export default function App() {
         duration: 1,
         stagger: 0.12,
         ease: 'power3.out'
-      });
-
-      // Pinned Cards Stacking
-      const cards = gsap.utils.toArray('.protocol-card');
-      const protocolTimeline = gsap.timeline({
-        scrollTrigger: {
-          trigger: protocolContainerRef.current,
-          start: 'top top',
-          end: '+=250%',
-          pin: true,
-          scrub: 1,
-          anticipatePin: 1
-        }
-      });
-
-      cards.forEach((card, i) => {
-        if (i > 0) {
-          protocolTimeline.fromTo(card,
-            { yPercent: 120, scale: 0.95 },
-            { yPercent: 0, scale: 1, ease: 'power2.out', duration: 1 },
-            `card-${i}`
-          );
-        }
-        if (i < cards.length - 1) {
-          protocolTimeline.to(cards[i],
-            {
-              scale: 0.88,
-              filter: 'blur(16px)',
-              opacity: 0.45,
-              ease: 'power2.inOut',
-              duration: 1
-            },
-            `card-${i+1}-=0.85`
-          );
-        }
       });
 
     });
@@ -434,9 +398,8 @@ export default function App() {
           scrolled ? 'text-navyBlue/70' : 'text-white/95'
         }`}>
           <a href="#kitoblar" className={`hover-lift transition-colors font-medium ${scrolled ? 'hover:text-royalBlue' : 'hover:text-sky-300'}`}>Katalog</a>
-          <a href="#tarixiy-kitoblar" className={`hover-lift transition-colors font-medium ${scrolled ? 'hover:text-royalBlue' : 'hover:text-sky-300'}`}>KITOBLAR</a>
-          <a href="#diniy-kitoblar" className={`hover-lift transition-colors font-medium ${scrolled ? 'hover:text-royalBlue' : 'hover:text-sky-300'}`}>Diniy Kitoblar</a>
-          <a href="#sovg'alar" className={`hover-lift transition-colors font-medium ${scrolled ? 'hover:text-royalBlue' : 'hover:text-sky-300'}`}>Sovg'alar</a>
+          <a href="#tarixiy-kitoblar" className={`hover-lift transition-colors font-medium ${scrolled ? 'hover:text-royalBlue' : 'hover:text-sky-300'}`}>Sovg'alar</a>
+          <a href="#afzalliklar" className={`hover-lift transition-colors font-medium ${scrolled ? 'hover:text-royalBlue' : 'hover:text-sky-300'}`}>Afzalliklar</a>
           
           {/* Prominent Standalone Link with Elegant Visual Marker for Umra Anjomlari */}
           <button 
@@ -478,21 +441,14 @@ export default function App() {
               onClick={() => setIsMobileMenuOpen(false)}
               className="font-mono text-xs tracking-wider uppercase text-navyBlue font-medium py-1 px-2 hover:bg-navyBlue/5 rounded-xl transition-all"
             >
-              KITOBLAR
-            </a>
-            <a 
-              href="#diniy-kitoblar" 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="font-mono text-xs tracking-wider uppercase text-navyBlue font-medium py-1 px-2 hover:bg-navyBlue/5 rounded-xl transition-all"
-            >
-              Diniy Kitoblar
-            </a>
-            <a 
-              href="#sovg'alar" 
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="font-mono text-xs tracking-wider uppercase text-navyBlue font-medium py-1 px-2 hover:bg-navyBlue/5 rounded-xl transition-all"
-            >
               Sovg'alar
+            </a>
+            <a 
+              href="#afzalliklar" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="font-mono text-xs tracking-wider uppercase text-navyBlue font-medium py-1 px-2 hover:bg-navyBlue/5 rounded-xl transition-all"
+            >
+              Afzalliklar
             </a>
             
             <button 
@@ -812,132 +768,35 @@ export default function App() {
         </div>
       </section>
 
-      {/* CATEGORIES DETAILED SECTIONS (Tarixiy Kitoblar, Diniy Kitoblar, Sovg'alar) */}
-      <section id="protocol" className="relative bg-royalBg">
-        <div ref={protocolContainerRef} className="sticky-stack-container">
-          
-          {/* Card 1: Premium Sovg'alar */}
-          <div id="tarixiy-kitoblar" className="protocol-card min-h-screen w-full bg-royalBg flex items-center justify-center px-6 md:px-16 py-24 absolute top-0 left-0">
-            <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-center">
-              <div>
-                <span className="font-mono text-xs text-royalBlue tracking-[0.25em] uppercase block mb-4 font-bold">
-                  KATEGORIYA 01 // PREMIUM SOVG'ALAR
-                </span>
-                <h3 className="text-4xl md:text-5xl font-bold font-serif text-navyBlue mb-6 leading-tight">
-                  Yaqinlaringiz uchun mukammal hadyalar.
-                </h3>
-                <p className="text-slateDark text-sm md:text-base leading-relaxed mb-8 font-light">
-                  Yaqinlaringizga sovg'a izlashning endi hech qanday hojati yo'q. Qadrli va nafis to'plamlarning barchasi endi bizning do'konimizda mujassam.
-                </p>
-                <div className="font-mono text-xs text-royalBlue/70 space-y-2 border-l border-royalBlue/30 pl-4">
-                  <div>// PREMIUM SOVG'ALAR VA KITOB TO'PLAMLARI</div>
-                  <div>// EKSKLYUZIV QADOQLASH XIZMATI VA YETKAZIB BERISH</div>
-                </div>
-              </div>
-
-              {/* Animation Graphic (Rotating brand logo with premium isolation mask) */}
-              <div className="flex items-center justify-center p-8 bg-white border border-royalBorder rounded-6xl h-[300px] md:h-[400px] shadow-2xl relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-tr from-royalBlue/5 to-transparent pointer-events-none" />
-                <img 
-                  src="/logo.png" 
-                  alt="Qalam Samarqand" 
-                  className="w-36 h-36 md:w-48 md:h-48 object-contain animate-[spin_40s_linear_infinite]"
-                  style={{ mixBlendMode: 'multiply', clipPath: 'circle(50%)' }}
-                />
-              </div>
+      {/* BRAND HIGHLIGHT SHOWCASE (Yaqinlaringiz uchun mukammal hadyalar) */}
+      <section id="tarixiy-kitoblar" className="w-full bg-royalBg flex items-center justify-center px-6 md:px-16 py-24 border-t border-royalBorder">
+        <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-center">
+          <div>
+            <span className="font-mono text-xs text-royalBlue tracking-[0.25em] uppercase block mb-4 font-bold">
+              KATEGORIYA 01 // PREMIUM SOVG'ALAR
+            </span>
+            <h3 className="text-4xl md:text-5xl font-bold font-serif text-navyBlue mb-6 leading-tight">
+              Yaqinlaringiz uchun mukammal hadyalar.
+            </h3>
+            <p className="text-slateDark text-sm md:text-base leading-relaxed mb-8 font-light">
+              Yaqinlaringizga sovg'a izlashning endi hech qanday hojati yo'q. Qadrli va nafis to'plamlarning barchasi endi bizning do'konimizda mujassam.
+            </p>
+            <div className="font-mono text-xs text-royalBlue/70 space-y-2 border-l border-royalBlue/30 pl-4">
+              <div>// PREMIUM SOVG'ALAR VA KITOB TO'PLAMLARI</div>
+              <div>// EKSKLYUZIV QADOQLASH XIZMATI VA YETKAZIB BERISH</div>
             </div>
           </div>
 
-          {/* Card 2: Diniy Kitoblar */}
-          <div id="diniy-kitoblar" className="protocol-card min-h-screen w-full bg-royalBg flex items-center justify-center px-6 md:px-16 py-24 absolute top-0 left-0">
-            <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-center">
-              <div>
-                <span className="font-mono text-xs text-royalBlue tracking-[0.25em] uppercase block mb-4 font-bold">
-                  KATEGORIYA 02 // DINIY KITOBLAR
-                </span>
-                <h3 className="text-4xl md:text-5xl font-bold font-serif text-navyBlue mb-6 leading-tight">
-                  Muqaddas Kitoblar va Diniy Adabiyotlar
-                </h3>
-                <p className="text-slateDark text-sm md:text-base leading-relaxed mb-8 font-light">
-                  Muqaddas Qur'oni Karim nashrlari, Hadis to'plamlari va islomiy ma'rifat kitoblari. Sahifalari nafis tilla rang hoshiyalar bilan bezatilgan, muqovasi yuqori sifatli mato va charmdan tayyorlangan kitoblar kolleksiyasi.
-                </p>
-                <div className="font-mono text-xs text-royalBlue/70 space-y-2 border-l border-royalBlue/30 pl-4">
-                  <div>// QUR'ON VA HADIS MANBALARI</div>
-                  <div>// ISLOMIY MA'RIFIY KITOBLAR TO'PLAMI</div>
-                </div>
-              </div>
-
-              {/* Animation Graphic (Scanning horizontal laser line over Calligraphy vectors) */}
-              <div className="flex items-center justify-center p-8 bg-white border border-royalBorder rounded-6xl h-[300px] md:h-[400px] shadow-2xl relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-royalBlue/5 to-transparent pointer-events-none" />
-                
-                {/* Horizontal scanner bar in blue */}
-                <div className="absolute left-0 w-full h-[1.5px] bg-royalBlue/70 shadow-[0_0_15px_#0A369D] animate-[bounce_5s_infinite_ease-in-out]" style={{ top: '15%' }} />
-
-                <svg className="w-56 h-56 text-royalBlue/30" viewBox="0 0 100 100" fill="none" stroke="currentColor" strokeWidth="0.75">
-                  <path d="M0,10 H100 M0,20 H100 M0,30 H100 M0,40 H100 M0,50 H100 M0,60 H100 M0,70 H100 M0,80 H100 M0,90 H100" strokeWidth="0.2" strokeDasharray="1 3" />
-                  <path d="M10,0 V100 M20,0 V100 M30,0 V100 M40,0 V100 M50,0 V100 M60,0 V100 M70,0 V100 M80,0 V100 M90,0 V100" strokeWidth="0.2" strokeDasharray="1 3" />
-                  <path d="M25,50 C25,25 35,15 50,15 C65,15 75,25 75,50 C75,75 60,85 50,85 C30,85 25,65 25,50 Z" strokeWidth="1" />
-                  <path d="M35,50 C35,35 40,25 50,25 C60,25 65,35 65,50 C65,65 55,75 50,75 C40,75 35,60 35,50 Z" strokeWidth="0.5" strokeDasharray="2 2" />
-                  <path d="M15,30 Q50,70 85,30" strokeWidth="1" />
-                  <path d="M15,70 Q50,30 85,70" strokeWidth="1" />
-                </svg>
-              </div>
-            </div>
+          {/* Animation Graphic (Rotating brand logo with premium isolation mask) */}
+          <div className="flex items-center justify-center p-8 bg-white border border-royalBorder rounded-6xl h-[300px] md:h-[400px] shadow-2xl relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-tr from-royalBlue/5 to-transparent pointer-events-none" />
+            <img 
+              src="/logo.png" 
+              alt="Qalam Samarqand" 
+              className="w-36 h-36 md:w-48 md:h-48 object-contain animate-[spin_40s_linear_infinite]"
+              style={{ mixBlendMode: 'multiply', clipPath: 'circle(50%)' }}
+            />
           </div>
-
-          {/* Card 3: Sovg'alar */}
-          <div id="sovg'alar" className="protocol-card min-h-screen w-full bg-royalBg flex items-center justify-center px-6 md:px-16 py-24 absolute top-0 left-0">
-            <div className="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 items-center">
-              <div>
-                <span className="font-mono text-xs text-royalBlue tracking-[0.25em] uppercase block mb-4 font-bold">
-                  KATEGORIYA 03 // PREMIUM SOVG'ALAR
-                </span>
-                <h3 className="text-4xl md:text-5xl font-bold font-serif text-navyBlue mb-6 leading-tight">
-                  Saralangan Hadya To'plamlari va Aksessuarlar
-                </h3>
-                <p className="text-slateDark text-sm md:text-base leading-relaxed mb-8 font-light">
-                  Eng yaqin insonlaringiz va qadrdonlaringiz uchun munosib sovg'alar. Baxmal bilan qoplangan, yong'oq yog'ochidan ishlangan eksklyuziv sandiqlar, maxsus islomiy tuhfalar, xattotlik bezaklari va qadriyatga aylanuvchi esdaliklar.
-                </p>
-                <div className="font-mono text-xs text-royalBlue/70 space-y-2 border-l border-royalBlue/30 pl-4">
-                  <div>// YUKORI SIFATLI YONG'OQ SANDIQLARI</div>
-                  <div>// SHAXSIY NOM NAQSHLANADIGAN BAXMAL SOVG'ALAR</div>
-                </div>
-              </div>
-
-              {/* Animation Graphic (Waveform pulse stroke-dashoffset animation) */}
-              <div className="flex items-center justify-center p-8 bg-white border border-royalBorder rounded-6xl h-[300px] md:h-[400px] shadow-2xl relative overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-bl from-royalBlue/5 to-transparent pointer-events-none" />
-                <svg className="w-full h-32 text-royalBlue/60" viewBox="0 0 200 60" fill="none" stroke="currentColor" strokeWidth="1">
-                  <path 
-                    d="M 10 30 Q 30 10 50 30 T 90 30 T 130 30 T 170 30 T 190 30" 
-                    strokeDasharray="400"
-                    strokeDashoffset="400"
-                    className="animate-[dash_6s_linear_infinite]"
-                  />
-                  <path 
-                    d="M 10 30 Q 30 50 50 30 T 90 30 T 130 30 T 170 30 T 190 30" 
-                    strokeWidth="0.5"
-                    strokeDasharray="400"
-                    strokeDashoffset="400"
-                    className="animate-[dash_6s_linear_infinite_reverse] opacity-40"
-                  />
-                  <circle cx="50" cy="30" r="2.5" fill="#0A369D" />
-                  <circle cx="90" cy="30" r="2.5" fill="#0A369D" />
-                  <circle cx="130" cy="30" r="2.5" fill="#0A369D" />
-                </svg>
-
-                <style>{`
-                  @keyframes dash {
-                    to {
-                      stroke-dashoffset: 0;
-                    }
-                  }
-                `}</style>
-              </div>
-            </div>
-          </div>
-
         </div>
       </section>
 
@@ -1011,9 +870,8 @@ export default function App() {
             <h4 className="font-mono text-xs text-royalBg/80 tracking-widest uppercase mb-4">Kategoriyalar</h4>
             <ul className="space-y-2 font-mono text-[10px] text-royalBg/40 uppercase tracking-widest">
               <li><a href="#kitoblar" className="hover:text-royalBlueLight transition-colors">Katalog</a></li>
-              <li><a href="#tarixiy-kitoblar" className="hover:text-royalBlueLight transition-colors">KITOBLAR</a></li>
-              <li><a href="#diniy-kitoblar" className="hover:text-royalBlueLight transition-colors">Diniy Kitoblar</a></li>
-              <li><a href="#sovg'alar" className="hover:text-royalBlueLight transition-colors">Sovg'alar</a></li>
+              <li><a href="#tarixiy-kitoblar" className="hover:text-royalBlueLight transition-colors">Sovg'alar</a></li>
+              <li><a href="#afzalliklar" className="hover:text-royalBlueLight transition-colors">Afzalliklar</a></li>
             </ul>
           </div>
           <div>
