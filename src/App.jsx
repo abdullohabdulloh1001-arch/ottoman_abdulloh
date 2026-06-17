@@ -22,7 +22,8 @@ import {
   Heart,
   MapPin,
   Truck,
-  Search
+  Search,
+  Menu
 } from 'lucide-react';
 
 // Register GSAP plugins
@@ -87,6 +88,7 @@ export default function App() {
   const [isUmraModalOpen, setIsUmraModalOpen] = useState(false);
   const [isDiniyModalOpen, setIsDiniyModalOpen] = useState(false);
   const [isKitoblarModalOpen, setIsKitoblarModalOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
   const filteredProducts = ALL_PRODUCTS.filter(product =>
@@ -371,25 +373,37 @@ export default function App() {
       <div className="noise-overlay" />
 
       {/* Floating Pill Navbar */}
-      <nav className={`fixed left-1/2 -translate-x-1/2 w-[90%] max-w-5xl z-50 rounded-full border transition-all duration-500 flex items-center justify-between px-4 md:px-8 ${
-        scrolled 
-          ? 'top-4 bg-white/95 backdrop-blur-xl border-royalBlue/20 shadow-2xl py-2 shadow-navyBlue/5' 
+      <nav className={`fixed left-1/2 -translate-x-1/2 w-[90%] max-w-5xl z-50 rounded-[1.8rem] md:rounded-full border transition-all duration-500 flex flex-col md:flex-row md:items-center justify-between px-4 md:px-8 ${
+        scrolled || isMobileMenuOpen
+          ? 'top-4 bg-white/95 backdrop-blur-xl border-royalBlue/20 shadow-2xl py-2.5 shadow-navyBlue/5' 
           : 'top-6 bg-transparent border-transparent py-4'
       }`}>
-        <a href="#" className="flex items-center gap-2 md:gap-3 hover-lift">
-          <img 
-            src="/logo.png" 
-            alt="Qalam Samarqand Logo" 
-            className="h-8 w-8 md:h-10 md:w-10 rounded-full border border-royalBlue/20 object-cover bg-white"
-          />
-          <span className={`font-serif text-sm md:text-base lg:text-lg font-bold tracking-wider hidden sm:inline-block transition-colors duration-500 ${
-            scrolled ? 'text-royalBlue' : 'text-white'
-          }`}>
-            QALAM SAMARQAND
-          </span>
-        </a>
+        <div className="flex items-center justify-between w-full md:w-auto">
+          <a href="#" className="flex items-center gap-2 md:gap-3 hover-lift">
+            <img 
+              src="/logo.png" 
+              alt="Qalam Samarqand Logo" 
+              className="h-8 w-8 md:h-10 md:w-10 rounded-full border border-royalBlue/20 object-cover bg-white"
+            />
+            <span className={`font-serif text-sm md:text-base lg:text-lg font-bold tracking-wider transition-colors duration-500 ${
+              scrolled || isMobileMenuOpen ? 'text-royalBlue' : 'text-white'
+            }`}>
+              QALAM SAMARQAND
+            </span>
+          </a>
+
+          {/* Hamburger / Close Menu Button on Mobile */}
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            className={`md:hidden p-2 rounded-full transition-colors ${
+              scrolled || isMobileMenuOpen ? 'text-navyBlue hover:bg-navyBlue/5' : 'text-white hover:bg-white/10'
+            }`}
+          >
+            {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
         
-        {/* Navigation Categories */}
+        {/* Navigation Categories (Desktop) */}
         <div className={`hidden md:flex items-center gap-5 lg:gap-7 font-mono text-[9px] lg:text-[10px] tracking-[0.15em] uppercase transition-colors duration-500 ${
           scrolled ? 'text-navyBlue/70' : 'text-white/95'
         }`}>
@@ -412,13 +426,65 @@ export default function App() {
           </button>
         </div>
         
-        <MagneticButton 
-          variant="primary" 
-          onClick={handleTelegramRedirect}
-          className="px-4 py-2.5 text-[9px] md:px-5 md:py-3 md:text-xs bg-royalBlue border-royalBlue hover:bg-navyBlue text-white"
-        >
-          Buyurtma berish
-        </MagneticButton>
+        {/* Desktop CTA Button */}
+        <div className="hidden md:block">
+          <MagneticButton 
+            variant="primary" 
+            onClick={handleTelegramRedirect}
+            className="px-4 py-2.5 text-[9px] md:px-5 md:py-3 md:text-xs bg-royalBlue border-royalBlue hover:bg-navyBlue text-white"
+          >
+            Buyurtma berish
+          </MagneticButton>
+        </div>
+
+        {/* Mobile Menu Panel (Slide-down dropdown) */}
+        {isMobileMenuOpen && (
+          <div className="md:hidden mt-4 pt-4 border-t border-royalBlue/10 flex flex-col gap-4 pb-2">
+            <a 
+              href="#kitoblar" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="font-mono text-xs tracking-wider uppercase text-navyBlue font-medium py-1 px-2 hover:bg-navyBlue/5 rounded-xl transition-all"
+            >
+              Katalog
+            </a>
+            <a 
+              href="#tarixiy-kitoblar" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="font-mono text-xs tracking-wider uppercase text-navyBlue font-medium py-1 px-2 hover:bg-navyBlue/5 rounded-xl transition-all"
+            >
+              KITOBLAR
+            </a>
+            <a 
+              href="#diniy-kitoblar" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="font-mono text-xs tracking-wider uppercase text-navyBlue font-medium py-1 px-2 hover:bg-navyBlue/5 rounded-xl transition-all"
+            >
+              Diniy Kitoblar
+            </a>
+            <a 
+              href="#sovg'alar" 
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="font-mono text-xs tracking-wider uppercase text-navyBlue font-medium py-1 px-2 hover:bg-navyBlue/5 rounded-xl transition-all"
+            >
+              Sovg'alar
+            </a>
+            
+            <button 
+              onClick={() => { setIsUmraModalOpen(true); setIsMobileMenuOpen(false); }}
+              className="font-mono text-xs font-bold text-amber-700 bg-amber-500/10 border border-amber-500/20 px-4 py-2.5 rounded-full flex items-center justify-center gap-2 self-start"
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span>
+              Umra Anjomlari
+            </button>
+
+            <button
+              onClick={() => { handleTelegramRedirect(); setIsMobileMenuOpen(false); }}
+              className="w-full bg-royalBlue text-white font-mono text-xs tracking-widest uppercase py-3.5 rounded-full font-bold shadow-md hover:bg-navyBlue transition-all duration-300"
+            >
+              Buyurtma berish
+            </button>
+          </div>
+        )}
       </nav>
 
       {/* HERO SECTION */}
@@ -541,7 +607,7 @@ export default function App() {
             <div className="mb-8 font-mono text-xs text-slateMuted tracking-wider uppercase">
               Qidiruv natijalari ({filteredProducts.length})
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8">
               {filteredProducts.length > 0 ? (
                 filteredProducts.map(product => (
                   <div key={product.id} className="bg-white border border-royalBorder rounded-5xl p-6 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
@@ -579,7 +645,7 @@ export default function App() {
           </div>
         ) : (
           /* Standard Categories Grid */
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 items-stretch">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 items-stretch">
             
             {/* Card 1: Kitoblar */}
             <div className="bg-white border border-royalBorder rounded-5xl p-6 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
@@ -706,7 +772,7 @@ export default function App() {
             BIZNING MAQSADIMIZ
           </span>
 
-          <h2 className="philosophy-fade-up text-2xl sm:text-3xl md:text-5xl font-serif text-navyBlue leading-snug md:leading-tight font-bold tracking-tight max-w-2xl">
+          <h2 className="philosophy-fade-up text-xl sm:text-2xl md:text-4xl lg:text-5xl font-serif text-navyBlue leading-snug md:leading-tight font-bold tracking-tight max-w-2xl px-4">
             Biz xalqqa bozordan yaqinroqmiz.
           </h2>
 
@@ -951,21 +1017,21 @@ export default function App() {
       {/* Premium Overlay Modal for Umra Anjomlari */}
       {isUmraModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-navyBlue/60 backdrop-blur-md p-4 animate-fade-in">
-          <div className="bg-royalBg border border-royalBlue/10 rounded-[2.5rem] w-full max-w-6xl max-h-[90vh] overflow-y-auto shadow-2xl relative p-6 md:p-10 animate-scale-up">
+          <div className="bg-royalBg border border-royalBlue/10 rounded-[1.5rem] md:rounded-[2.5rem] w-full max-w-6xl max-h-[96vh] md:max-h-[90vh] overflow-y-auto shadow-2xl relative p-4 sm:p-6 md:p-10 animate-scale-up">
             
             {/* Modal Header */}
-            <div className="flex justify-between items-start mb-8 pb-4 border-b border-royalBorder">
+            <div className="flex justify-between items-start mb-6 md:mb-8 pb-4 border-b border-royalBorder">
               <div>
                 <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-royalBlue border border-royalBlue/20 rounded-full px-4 py-1.5 bg-royalBlueLight/30 font-bold">
                   Safar Tayyorgarligi
                 </span>
-                <h2 className="text-2xl md:text-4xl font-bold font-serif text-navyBlue mt-3">
+                <h2 className="text-xl md:text-4xl font-bold font-serif text-navyBlue mt-3">
                   Muborak Safar To'plamlari (Umra Anjomlari)
                 </h2>
               </div>
               <button 
                 onClick={() => setIsUmraModalOpen(false)}
-                className="bg-navyBlue/5 hover:bg-navyBlue/10 text-navyBlue p-3 rounded-full transition-all flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase font-bold"
+                className="bg-navyBlue/5 hover:bg-navyBlue/10 text-navyBlue p-2 sm:p-3 rounded-full transition-all flex items-center gap-1 sm:gap-1.5 font-mono text-[8px] sm:text-[10px] tracking-wider uppercase font-bold"
               >
                 <X className="w-4 h-4" />
                 <span>Yopish</span>
@@ -973,7 +1039,7 @@ export default function App() {
             </div>
 
             {/* 3 Premium Packages Layout */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 items-stretch">
               
               {/* Card 1: Ekonom To'plam */}
               <div className="bg-white border border-royalBorder rounded-5xl p-6 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
@@ -1094,21 +1160,21 @@ export default function App() {
       {/* Premium Overlay Modal for Diniy Kitoblar */}
       {isDiniyModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-navyBlue/60 backdrop-blur-md p-4 animate-fade-in">
-          <div className="bg-royalBg border border-royalBlue/10 rounded-[2.5rem] w-full max-w-6xl max-h-[90vh] overflow-y-auto shadow-2xl relative p-6 md:p-10 animate-scale-up">
+          <div className="bg-royalBg border border-royalBlue/10 rounded-[1.5rem] md:rounded-[2.5rem] w-full max-w-6xl max-h-[96vh] md:max-h-[90vh] overflow-y-auto shadow-2xl relative p-4 sm:p-6 md:p-10 animate-scale-up">
             
             {/* Modal Header */}
-            <div className="flex justify-between items-start mb-8 pb-4 border-b border-royalBorder">
+            <div className="flex justify-between items-start mb-6 md:mb-8 pb-4 border-b border-royalBorder">
               <div>
                 <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-royalBlue border border-royalBlue/20 rounded-full px-4 py-1.5 bg-royalBlueLight/30 font-bold">
                   Ma'naviy Qadriyatlar
                 </span>
-                <h2 className="text-2xl md:text-4xl font-bold font-serif text-navyBlue mt-3">
+                <h2 className="text-xl md:text-4xl font-bold font-serif text-navyBlue mt-3">
                   Diniy Kitoblar Kolleksiyasi
                 </h2>
               </div>
               <button 
                 onClick={() => setIsDiniyModalOpen(false)}
-                className="bg-navyBlue/5 hover:bg-navyBlue/10 text-navyBlue p-3 rounded-full transition-all flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase font-bold"
+                className="bg-navyBlue/5 hover:bg-navyBlue/10 text-navyBlue p-2 sm:p-3 rounded-full transition-all flex items-center gap-1 sm:gap-1.5 font-mono text-[8px] sm:text-[10px] tracking-wider uppercase font-bold"
               >
                 <X className="w-4 h-4" />
                 <span>Yopish</span>
@@ -1298,21 +1364,21 @@ export default function App() {
       {/* Premium Overlay Modal for Kitoblar */}
       {isKitoblarModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-navyBlue/60 backdrop-blur-md p-4 animate-fade-in">
-          <div className="bg-royalBg border border-royalBlue/10 rounded-[2.5rem] w-full max-w-6xl max-h-[90vh] overflow-y-auto shadow-2xl relative p-6 md:p-10 animate-scale-up">
+          <div className="bg-royalBg border border-royalBlue/10 rounded-[1.5rem] md:rounded-[2.5rem] w-full max-w-6xl max-h-[96vh] md:max-h-[90vh] overflow-y-auto shadow-2xl relative p-4 sm:p-6 md:p-10 animate-scale-up">
             
             {/* Modal Header */}
-            <div className="flex justify-between items-start mb-8 pb-4 border-b border-royalBorder">
+            <div className="flex justify-between items-start mb-6 md:mb-8 pb-4 border-b border-royalBorder">
               <div>
                 <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-royalBlue border border-royalBlue/20 rounded-full px-4 py-1.5 bg-royalBlueLight/30 font-bold">
                   Ma'naviy Va Ilmiy
                 </span>
-                <h2 className="text-2xl md:text-4xl font-bold font-serif text-navyBlue mt-3">
+                <h2 className="text-xl md:text-4xl font-bold font-serif text-navyBlue mt-3">
                   Kitoblar Kolleksiyasi
                 </h2>
               </div>
               <button 
                 onClick={() => setIsKitoblarModalOpen(false)}
-                className="bg-navyBlue/5 hover:bg-navyBlue/10 text-navyBlue p-3 rounded-full transition-all flex items-center gap-1.5 font-mono text-[10px] tracking-wider uppercase font-bold"
+                className="bg-navyBlue/5 hover:bg-navyBlue/10 text-navyBlue p-2 sm:p-3 rounded-full transition-all flex items-center gap-1 sm:gap-1.5 font-mono text-[8px] sm:text-[10px] tracking-wider uppercase font-bold"
               >
                 <X className="w-4 h-4" />
                 <span>Yopish</span>
