@@ -952,7 +952,7 @@ export default function App() {
                   href="https://www.instagram.com/qalamsamarqand?igsh=ZmZvZzdmOWRqc2V3" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="hover:text-royalBlueLight transition-colors flex items-center gap-2"
+                  className="transition-all duration-300 hover:scale-105 flex items-center gap-2 text-pink-500 hover:text-pink-400 font-semibold origin-left inline-flex"
                 >
                   <InstagramIcon className="w-4 h-4" />
                   <span>Instagram</span>
@@ -963,7 +963,7 @@ export default function App() {
                   href="https://t.me/QalamSamarqand" 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="hover:text-royalBlueLight transition-colors flex items-center gap-2"
+                  className="transition-all duration-300 hover:scale-105 flex items-center gap-2 text-sky-400 hover:text-sky-300 font-semibold origin-left inline-flex"
                 >
                   <TelegramIcon className="w-4 h-4" />
                   <span>Telegram Kanalimiz</span>
