@@ -20,6 +20,7 @@ import {
   Gift,
   Book,
   Heart,
+  ShoppingCart,
   MapPin,
   Truck,
   Search,
@@ -420,17 +421,13 @@ export default function App() {
           <div className="md:hidden flex items-center gap-2">
             <button 
               onClick={() => setIsFavoritesModalOpen(true)}
-              className={`p-2 rounded-full transition-all relative ${
-                scrolled || isMobileMenuOpen ? 'text-navyBlue hover:bg-navyBlue/5' : 'text-white hover:bg-white/10'
-              }`}
-              title="Tanlanganlar"
+              className="hover-lift transition-all duration-300 font-bold flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[10px] tracking-wider uppercase font-mono bg-amber-500 hover:bg-amber-600 text-navyBlue shadow-md shadow-amber-500/20 active:scale-95"
+              title="Savatcha"
             >
-              <Heart className={`w-5 h-5 transition-colors ${favorites.length > 0 ? 'fill-current text-royalBlue' : ''}`} />
-              {favorites.length > 0 && (
-                <span className="absolute -top-1 -right-1 bg-royalBlue text-white text-[8px] font-bold w-4 h-4 rounded-full flex items-center justify-center animate-pulse">
-                  {favorites.length}
-                </span>
-              )}
+              <ShoppingCart className="w-3.5 h-3.5 text-navyBlue" />
+              <span className="flex items-center justify-center bg-navyBlue text-amber-500 font-black text-[8px] w-4.5 h-4.5 rounded-full">
+                {favorites.length}
+              </span>
             </button>
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
@@ -469,15 +466,14 @@ export default function App() {
         <div className="hidden md:flex items-center gap-4">
           <button 
             onClick={() => setIsFavoritesModalOpen(true)}
-            className={`hover-lift transition-all duration-300 font-bold flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[10px] tracking-wider uppercase font-mono ${
-              scrolled 
-                ? 'bg-royalBlue/10 border border-royalBlue/20 text-royalBlue hover:bg-royalBlue/20' 
-                : 'bg-white/10 border border-white/20 text-white hover:bg-white/25'
-            }`}
-            title="Tanlanganlar"
+            className="hover-lift transition-all duration-300 font-bold flex items-center gap-2 px-4 py-2 rounded-full text-[10px] tracking-wider uppercase font-mono bg-amber-500 hover:bg-amber-600 text-navyBlue shadow-lg shadow-amber-500/25 active:scale-95"
+            title="Savatcha"
           >
-            <Heart className={`w-3.5 h-3.5 ${favorites.length > 0 ? 'fill-current' : ''}`} />
-            <span>Tanlanganlar ({favorites.length})</span>
+            <ShoppingCart className="w-3.5 h-3.5 text-navyBlue" />
+            <span className="font-extrabold text-navyBlue">Savatcha</span>
+            <span className="flex items-center justify-center bg-navyBlue text-amber-500 font-black text-[9px] w-5 h-5 rounded-full">
+              {favorites.length}
+            </span>
           </button>
           <MagneticButton 
             variant="primary" 
@@ -523,10 +519,13 @@ export default function App() {
 
             <button 
               onClick={() => { setIsFavoritesModalOpen(true); setIsMobileMenuOpen(false); }}
-              className="font-mono text-xs font-bold text-royalBlue bg-royalBlue/10 border border-royalBlue/20 px-4 py-2.5 rounded-full flex items-center justify-center gap-2 self-start"
+              className="font-mono text-xs font-bold text-navyBlue bg-amber-500 hover:bg-amber-600 px-5 py-2.5 rounded-full flex items-center justify-center gap-2 self-start shadow-md shadow-amber-500/10 active:scale-95"
             >
-              <Heart className="w-3.5 h-3.5 fill-current" />
-              Tanlanganlar ({favorites.length})
+              <ShoppingCart className="w-3.5 h-3.5 text-navyBlue" />
+              <span>Savatcha</span>
+              <span className="flex items-center justify-center bg-navyBlue text-amber-500 font-black text-[10px] w-5 h-5 rounded-full">
+                {favorites.length}
+              </span>
             </button>
 
             <button
@@ -826,7 +825,7 @@ export default function App() {
           </span>
 
           <h2 className="philosophy-fade-up text-xl sm:text-2xl md:text-4xl lg:text-5xl font-serif text-navyBlue leading-snug md:leading-tight font-bold tracking-tight max-w-2xl px-4">
-            Biz xalqqa bozordan yaqinroqmiz.
+            Biz xalqga bozordan yaqinroqmiz.
           </h2>
 
           <div className="philosophy-fade-up w-12 h-[2px] bg-royalBlue/30 rounded-full mt-10 mb-10"></div>
@@ -1779,7 +1778,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Premium Overlay Modal for Favorites (Tanlanganlar) */}
+      {/* Premium Overlay Modal for Savatcha (Shopping Cart) */}
       {isFavoritesModalOpen && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-navyBlue/60 backdrop-blur-md p-4 animate-fade-in">
           <div className="bg-royalBg border border-royalBlue/10 rounded-[1.5rem] md:rounded-[2.5rem] w-full max-w-2xl max-h-[96vh] md:max-h-[85vh] overflow-y-auto shadow-2xl relative p-4 sm:p-6 md:p-8 animate-scale-up">
@@ -1788,10 +1787,10 @@ export default function App() {
             <div className="flex justify-between items-start mb-6 pb-4 border-b border-royalBorder">
               <div>
                 <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-royalBlue border border-royalBlue/20 rounded-full px-4 py-1.5 bg-royalBlueLight/30 font-bold">
-                  Sizning To'plamingiz
+                  Sizning Savatchangiz
                 </span>
                 <h2 className="text-xl md:text-3xl font-bold font-serif text-navyBlue mt-3">
-                  Tanlangan Mahsulotlar
+                  Savatchangizdagi Mahsulotlar
                 </h2>
               </div>
               <button 
@@ -1837,7 +1836,7 @@ export default function App() {
                 {/* Checkout Section */}
                 <div className="border-t border-royalBorder pt-6 mt-6 space-y-4">
                   <div className="flex justify-between items-center font-serif text-lg font-bold text-navyBlue">
-                    <span>Jami tanlangan:</span>
+                    <span>Jami savatchada:</span>
                     <span>{favorites.length} ta mahsulot</span>
                   </div>
                   
@@ -1845,19 +1844,19 @@ export default function App() {
                     onClick={() => {
                       const favoritedProducts = favorites.map(id => ALL_PRODUCTS.find(p => p.id === id)).filter(Boolean);
                       const listText = favoritedProducts.map((p, idx) => `${idx + 1}. ${p.name} - ${p.price} so'm`).join('\n');
-                      const message = `Assalomu alaykum! Men quyidagi mahsulotlarni tanladim va sotib olmoqchiman:\n\n${listText}\n\nHammasi mavjudmi?`;
+                      const message = `Assalomu alaykum! Men quyidagi mahsulotlarni savatchamga qo'shdim va sotib olmoqchiman:\n\n${listText}\n\nHammasi mavjudmi?`;
                       window.open(`https://t.me/Abdurafiq_A?text=${encodeURIComponent(message)}`, '_blank');
                     }}
                     className="w-full bg-royalBlue hover:bg-navyBlue text-white font-mono text-xs tracking-widest uppercase py-4 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:scale-[1.01]"
                   >
-                    Tanlanganlar bo'yicha buyurtma berish <ArrowRight className="w-4 h-4" />
+                    Savatcha bo'yicha buyurtma berish <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
               </div>
             ) : (
               <div className="py-12 text-center space-y-4">
-                <Heart className="w-12 h-12 text-navyBlue/20 mx-auto" />
-                <p className="text-slateMuted font-light text-sm">Hozircha tanlangan mahsulotlar yo'q. Mahsulotlar yonidagi yurakcha tugmasi orqali ularni bu yerga qo'shishingiz mumkin.</p>
+                <ShoppingCart className="w-12 h-12 text-navyBlue/20 mx-auto" />
+                <p className="text-slateMuted font-light text-sm">Savatchangiz bo'sh. Mahsulotlarni savatchaga qo'shish uchun ularning yonidagi yurakcha tugmasini bosing.</p>
               </div>
             )}
 
