@@ -926,7 +926,7 @@ export default function App() {
 
       {/* FOOTER */}
       <footer className="bg-navyBlue text-white rounded-t-[3rem] md:rounded-t-[4rem] pt-20 pb-12 px-6 md:px-12 relative z-20">
-        <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-12 mb-16">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-12 mb-16">
           <div className="md:col-span-2 space-y-4">
             <h3 className="font-serif text-xl md:text-2xl font-bold text-royalBg tracking-wider flex items-center gap-3">
               <img src="/logo.png" alt="Qalam logo" className="h-8 w-8 rounded-full border border-royalBlueLight/20 object-cover bg-white" />
@@ -969,14 +969,6 @@ export default function App() {
                   <span>Telegram Kanalimiz</span>
                 </a>
               </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-mono text-xs text-royalBg/80 tracking-widest uppercase mb-4">Huquqiy</h4>
-            <ul className="space-y-2 font-mono text-[10px] text-royalBg/40 uppercase tracking-widest">
-              <li><a href="#" className="hover:text-royalBlueLight transition-colors">Maxfiylik Nizomi</a></li>
-              <li><a href="#" className="hover:text-royalBlueLight transition-colors">Do'kon Shartlari</a></li>
-              <li><a href="#" className="hover:text-royalBlueLight transition-colors">Kafolat Audit</a></li>
             </ul>
           </div>
         </div>
