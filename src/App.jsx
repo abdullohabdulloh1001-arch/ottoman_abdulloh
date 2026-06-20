@@ -103,37 +103,471 @@ const FavoriteHeart = ({ isFavorite, onClick, className = "" }) => (
 );
 
 // ==========================================
+// ADMIN DASHBOARD COMPONENT
 // ==========================================
-// ALL PRODUCTS DATA
+const AdminDashboard = ({ onExit, products, setProducts }) => {
+  const [pin, setPin] = useState("");
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [authError, setAuthError] = useState("");
+  const [activeTab, setActiveTab] = useState("Tarixiy Kitoblar");
+  
+  // CRUD states
+  const [editingProduct, setEditingProduct] = useState(null);
+  const [name, setName] = useState("");
+  const [price, setPrice] = useState("");
+  const [image, setImage] = useState("");
+  const [category, setCategory] = useState("Tarixiy Kitoblar");
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  
+  // Telemetry logs
+  const [logs, setLogs] = useState([]);
+  const [stats, setStats] = useState({ views: 0, adds: 0, orders: 0 });
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadLogsAndStats();
+    }
+  }, [isAuthenticated]);
+
+  const loadLogsAndStats = () => {
+    try {
+      const l = localStorage.getItem('qalam_telemetry_logs');
+      setLogs(l ? JSON.parse(l) : []);
+      
+      setStats({
+        views: parseInt(localStorage.getItem('qalam_stats_views') || '0', 10),
+        adds: parseInt(localStorage.getItem('qalam_stats_adds') || '0', 10),
+        orders: parseInt(localStorage.getItem('qalam_stats_orders') || '0', 10)
+      });
+    } catch(e) {}
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (pin === "admin123") {
+      setIsAuthenticated(true);
+      setAuthError("");
+    } else {
+      setAuthError("Noto'g'ri administrator kaliti!");
+      setPin("");
+    }
+  };
+
+  const handleSaveProduct = (e) => {
+    e.preventDefault();
+    if (!name || !price || !image) return;
+
+    if (editingProduct) {
+      setProducts(prev => prev.map(p => p.id === editingProduct.id ? { ...p, name, price, image, category } : p));
+      setEditingProduct(null);
+    } else {
+      const newProduct = {
+        id: Date.now().toString(),
+        name,
+        price,
+        image,
+        category
+      };
+      setProducts(prev => [...prev, newProduct]);
+    }
+    setName("");
+    setPrice("");
+    setImage("");
+    setIsFormOpen(false);
+    loadLogsAndStats();
+  };
+
+  const handleEdit = (p) => {
+    setEditingProduct(p);
+    setName(p.name);
+    setPrice(p.price);
+    setImage(p.image);
+    setCategory(p.category);
+    setIsFormOpen(true);
+  };
+
+  const handleDelete = (id) => {
+    if (confirm("Ushbu mahsulotni o'chirishni tasdiqlaysizmi?")) {
+      setProducts(prev => prev.filter(p => p.id !== id));
+      loadLogsAndStats();
+    }
+  };
+
+  const handleClearLogs = () => {
+    if (confirm("Barcha loglarni tozalashni xohlaysizmi?")) {
+      localStorage.setItem('qalam_telemetry_logs', '[]');
+      setLogs([]);
+    }
+  };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="min-h-screen bg-navyBlue flex items-center justify-center p-4">
+        <div className="max-w-md w-full bg-navyBlue/45 border border-royalBlue/20 rounded-[2rem] p-8 md:p-10 shadow-2xl backdrop-blur-md text-center">
+          <span className="font-mono text-[9px] tracking-[0.3em] uppercase text-amber-500 border border-amber-500/20 rounded-full px-4 py-1 bg-amber-500/10 font-bold">
+            QALAM SAMARQAND
+          </span>
+          <h2 className="text-2xl font-serif font-bold text-white mt-6 mb-2">Boshqaruv Tizimi</h2>
+          <p className="text-xs text-royalBg/60 mb-8 font-light">Tizimga kirish uchun administrator parolini kiriting</p>
+          
+          <form onSubmit={handleLogin} className="space-y-6">
+            <div className="relative">
+              <input
+                type="password"
+                placeholder="PIN kod yoki Parol"
+                value={pin}
+                onChange={(e) => setPin(e.target.value)}
+                className="w-full px-6 py-4 bg-navyBlue/60 border border-royalBlue/20 rounded-full text-center font-mono text-lg text-white placeholder-white/20 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"
+                autoFocus
+              />
+            </div>
+            {authError && (
+              <p className="text-red-400 font-mono text-[10px] tracking-wider font-semibold">{authError}</p>
+            )}
+            <button
+              type="submit"
+              className="w-full bg-amber-500 hover:bg-amber-600 text-navyBlue font-mono text-xs tracking-widest uppercase py-4 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg hover:scale-[1.01]"
+            >
+              Kirishni Tasdiqlash
+            </button>
+          </form>
+          
+          <button 
+            onClick={onExit}
+            className="mt-8 text-royalBg/40 hover:text-white font-mono text-[9px] uppercase tracking-widest transition-colors flex items-center justify-center gap-1.5 mx-auto"
+          >
+            <ArrowRight className="w-3.5 h-3.5 rotate-180" /> Do'konga qaytish
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-royalBg text-navyBlue font-sans">
+      <nav className="bg-navyBlue text-white border-b border-royalBlue/10 px-6 py-4 md:px-12 flex justify-between items-center sticky top-0 z-30">
+        <div className="flex items-center gap-3">
+          <span className="font-serif text-lg font-bold tracking-wider text-amber-500">QALAM SAMARQAND</span>
+          <span className="font-mono text-[8px] bg-amber-500/10 border border-amber-500/30 text-amber-500 px-2 py-0.5 rounded-md uppercase font-bold">Admin Panel</span>
+        </div>
+        <div className="flex items-center gap-4">
+          <button 
+            onClick={onExit}
+            className="bg-white/10 hover:bg-white/15 text-white border border-white/15 px-4 py-2 rounded-full font-mono text-[10px] tracking-wider uppercase font-semibold transition-all flex items-center gap-1.5"
+          >
+            Do'konga o'tish
+          </button>
+          <button 
+            onClick={() => setIsAuthenticated(false)}
+            className="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-4 py-2 rounded-full font-mono text-[10px] tracking-wider uppercase font-semibold transition-all"
+          >
+            Chiqish
+          </button>
+        </div>
+      </nav>
+
+      <div className="max-w-7xl mx-auto px-6 py-10 md:px-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="lg:col-span-2 space-y-8">
+          <div className="bg-white border border-royalBorder rounded-3xl p-6 shadow-xl">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 border-b border-royalBorder pb-4">
+              <div>
+                <h2 className="text-xl font-serif font-bold text-navyBlue">Katalog Boshqaruvi</h2>
+                <p className="text-xs text-slateMuted font-light">Mahsulotlarni tahrirlash va yangi qo'shish</p>
+              </div>
+              <button
+                onClick={() => {
+                  setEditingProduct(null);
+                  setName("");
+                  setPrice("");
+                  setImage("");
+                  setCategory(activeTab);
+                  setIsFormOpen(true);
+                }}
+                className="bg-royalBlue hover:bg-navyBlue text-white font-mono text-[10px] tracking-wider uppercase px-5 py-2.5 rounded-full font-bold transition-all flex items-center gap-1.5 self-start shadow-md"
+              >
+                + Yangi Mahsulot
+              </button>
+            </div>
+
+            {isFormOpen && (
+              <form onSubmit={handleSaveProduct} className="bg-royalBg border border-royalBorder rounded-2xl p-6 mb-8 space-y-4 animate-fade-in">
+                <h3 className="font-serif font-bold text-navyBlue text-sm">{editingProduct ? "Mahsulotni tahrirlash" : "Yangi mahsulot qo'shish"}</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-[9px] font-mono uppercase tracking-wider text-navyBlue/70 mb-1">Nomi</label>
+                    <input
+                      type="text"
+                      placeholder="Nomi"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full px-4 py-2 border border-royalBorder rounded-xl text-sm focus:outline-none focus:border-royalBlue"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[9px] font-mono uppercase tracking-wider text-navyBlue/70 mb-1">Narxi (so'm)</label>
+                    <input
+                      type="text"
+                      placeholder="Masalan: 120 000"
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                      className="w-full px-4 py-2 border border-royalBorder rounded-xl text-sm focus:outline-none focus:border-royalBlue"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[9px] font-mono uppercase tracking-wider text-navyBlue/70 mb-1">Rasm Havolasi</label>
+                    <input
+                      type="text"
+                      placeholder="Masalan: /images/kitob.jpg"
+                      value={image}
+                      onChange={(e) => setImage(e.target.value)}
+                      className="w-full px-4 py-2 border border-royalBorder rounded-xl text-sm focus:outline-none focus:border-royalBlue"
+                      required
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-[9px] font-mono uppercase tracking-wider text-navyBlue/70 mb-1">Kategoriya</label>
+                    <select
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      className="w-full px-4 py-2 border border-royalBorder rounded-xl text-sm focus:outline-none focus:border-royalBlue bg-white"
+                    >
+                      <option value="Tarixiy Kitoblar">Tarixiy Kitoblar</option>
+                      <option value="Diniy Kitoblar">Diniy Kitoblar</option>
+                      <option value="Premium Sovg'alar">Premium Sovg'alar</option>
+                      <option value="Umra Anjomlari">Umra Anjomlari</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="flex gap-2 justify-end pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsFormOpen(false)}
+                    className="bg-navyBlue/5 hover:bg-navyBlue/10 text-navyBlue px-4 py-2 rounded-full font-mono text-[9px] uppercase tracking-wider font-bold transition-all"
+                  >
+                    Bekor qilish
+                  </button>
+                  <button
+                    type="submit"
+                    className="bg-royalBlue hover:bg-navyBlue text-white px-5 py-2 rounded-full font-mono text-[9px] uppercase tracking-wider font-bold transition-all"
+                  >
+                    {editingProduct ? "Saqlash" : "Qo'shish"}
+                  </button>
+                </div>
+              </form>
+            )}
+
+            <div className="flex flex-wrap gap-2 mb-6 border-b border-royalBorder pb-4">
+              {["Tarixiy Kitoblar", "Diniy Kitoblar", "Premium Sovg'alar", "Umra Anjomlari"].map(tab => (
+                <button
+                  key={tab}
+                  onClick={() => { setActiveTab(tab); setCategory(tab); }}
+                  className={`px-4 py-2 rounded-full font-mono text-[9px] tracking-wider uppercase font-semibold transition-all ${
+                    activeTab === tab
+                      ? 'bg-amber-500 text-navyBlue shadow-md shadow-amber-500/10'
+                      : 'bg-royalBg border border-royalBorder text-navyBlue/70 hover:text-navyBlue hover:bg-white'
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+
+            <div className="overflow-x-auto">
+              <table className="w-full text-left font-mono text-[10px] tracking-wide">
+                <thead>
+                  <tr className="border-b border-royalBorder text-navyBlue/50 uppercase tracking-widest text-[8px] bg-royalBg">
+                    <th className="py-3 px-4">Rasm</th>
+                    <th className="py-3 px-4">Nomi</th>
+                    <th className="py-3 px-4 text-right">Narxi</th>
+                    <th className="py-3 px-4 text-right">Amallar</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-royalBorder">
+                  {products.filter(p => p.category === activeTab).map(p => (
+                    <tr key={p.id} className="hover:bg-royalBg/40 transition-colors">
+                      <td className="py-3 px-4">
+                        <div className="w-10 h-10 border border-royalBorder bg-white rounded-lg overflow-hidden flex items-center justify-center flex-shrink-0">
+                          <img src={p.image} alt={p.name} className="max-h-full max-w-full object-contain" />
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 font-serif font-semibold text-navyBlue text-xs">{p.name}</td>
+                      <td className="py-3 px-4 text-right font-bold text-navyBlue">{p.price} so'm</td>
+                      <td className="py-3 px-4 text-right space-x-2">
+                        <button 
+                          type="button"
+                          onClick={() => handleEdit(p)}
+                          className="px-2.5 py-1.5 border border-royalBlue/20 text-royalBlue hover:bg-royalBlue hover:text-white rounded-lg transition-all"
+                        >
+                          Tahrir
+                        </button>
+                        <button 
+                          type="button"
+                          onClick={() => handleDelete(p.id)}
+                          className="px-2.5 py-1.5 border border-red-500/20 text-red-500 hover:bg-red-500 hover:text-white rounded-lg transition-all"
+                        >
+                          O'chirish
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                  {products.filter(p => p.category === activeTab).length === 0 && (
+                    <tr>
+                      <td colSpan="4" className="py-8 text-center text-slateMuted font-light">Kolleksiyada mahsulotlar mavjud emas.</td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+          </div>
+        </div>
+
+        <div className="space-y-8">
+          <div className="bg-white border border-royalBorder rounded-3xl p-6 shadow-xl space-y-4">
+            <h2 className="text-lg font-serif font-bold text-navyBlue mb-4">Statistika & Konversiya</h2>
+            <div className="grid grid-cols-3 gap-4 text-center">
+              <div className="bg-royalBg border border-royalBorder rounded-2xl p-4">
+                <span className="block text-[8px] font-mono uppercase tracking-widest text-navyBlue/60">Tashriflar</span>
+                <span className="block font-mono text-lg font-black text-navyBlue mt-2">{stats.views}</span>
+              </div>
+              <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-4">
+                <span className="block text-[8px] font-mono uppercase tracking-widest text-amber-700">Savatcha</span>
+                <span className="block font-mono text-lg font-black text-amber-600 mt-2">{stats.adds}</span>
+              </div>
+              <div className="bg-royalBlue/5 border border-royalBlue/20 rounded-2xl p-4">
+                <span className="block text-[8px] font-mono uppercase tracking-widest text-royalBlue">Buyurtma</span>
+                <span className="block font-mono text-lg font-black text-royalBlue mt-2">{stats.orders}</span>
+              </div>
+            </div>
+            
+            <div className="pt-2 border-t border-royalBorder text-center font-mono text-[9px] text-slateMuted">
+              Buyurtma konversiyasi: <span className="text-navyBlue font-bold">{stats.views > 0 ? ((stats.orders / stats.views) * 100).toFixed(1) : 0}%</span>
+            </div>
+          </div>
+
+          <div className="bg-white border border-royalBorder rounded-3xl p-6 shadow-xl">
+            <div className="flex justify-between items-center mb-4 pb-2 border-b border-royalBorder">
+              <div>
+                <h2 className="text-lg font-serif font-bold text-navyBlue">Harakatlar Logi</h2>
+                <p className="text-[10px] text-slateMuted">Foydalanuvchi faolligi</p>
+              </div>
+              <button 
+                type="button"
+                onClick={handleClearLogs}
+                className="font-mono text-[8px] tracking-wider uppercase text-red-500 border border-red-500/20 px-2 py-1 rounded-md hover:bg-red-500 hover:text-white transition-all"
+              >
+                Tozalash
+              </button>
+            </div>
+
+            <div className="max-h-[380px] overflow-y-auto pr-2 space-y-3 font-mono text-[9px]">
+              {logs.map(log => (
+                <div key={log.id} className="border border-royalBorder bg-royalBg/30 p-3 rounded-xl hover:border-royalBlue/10 transition-colors">
+                  <div className="flex justify-between items-center text-[7px] text-slateMuted border-b border-royalBorder/50 pb-1 mb-1">
+                    <span className="font-bold text-royalBlue">{log.type}</span>
+                    <span>{log.timestamp}</span>
+                  </div>
+                  <p className="text-navyBlue/80 font-serif leading-tight">{log.message}</p>
+                </div>
+              ))}
+              {logs.length === 0 && (
+                <div className="py-8 text-center text-slateMuted font-light">Tizimda faollik logs mavjud emas.</div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 // ==========================================
-const ALL_PRODUCTS = [
+// DEFAULT PRODUCTS DATA
+// ==========================================
+const DEFAULT_PRODUCTS = [
   { id: 'b1', name: "Hadislar to'plami", price: "50 000", image: "/images/kitob_hadis_toplam.jpg", category: "Diniy Kitoblar" },
   { id: 'b2', name: "365 kunda duo", price: "105 000", image: "/images/kitob_365_duo.jpg", category: "Diniy Kitoblar" },
   { id: 'b3', name: "365 kunda hadis", price: "105 000", image: "/images/kitob_365_hadis.jpg", category: "Diniy Kitoblar" },
   { id: 'b4', name: "Payg'ambarimni taniyman", price: "107 000", image: "/images/kitob_paygambar_taniyman.jpg", category: "Diniy Kitoblar" },
   { id: 'b5', name: "Payg'ambarlar qissasi", price: "110 000", image: "/images/kitob_paygambarlar_qissasi.jpg", category: "Diniy Kitoblar" },
-  { id: 'u1', name: "Ekonom To'plam", price: "1 000 000", image: "/images/umra_ekonom.jpg", category: "Umra Anjomlari" },
-  { id: 'u2', name: "Standart To'plam", price: "1 500 000", image: "/images/umra_standart.jpg", category: "Umra Anjomlari" },
-  { id: 'u3', name: "Premium To'plam", price: "2 000 000", image: "/images/umra_premium.jpg", category: "Umra Anjomlari" },
-  { id: 'k1', name: "Er-xotinga nasihat", price: "115 000", image: "/images/kitob_er_xotin.jpg", category: "Kitoblar" },
-  { id: 'k2', name: "Jannat bo'stonidagi oilaviy oqshomlar", price: "107 000", image: "/images/kitob_jannat_bostoni.jpg", category: "Kitoblar" },
-  { id: 'k3', name: "Oqshom go'zalliklari", price: "94 000", image: "/images/kitob_oqshom_gozalliklari.jpg", category: "Kitoblar" },
-  { id: 'k4', name: "Qalbi singanlarga", price: "61 000", image: "/images/kitob_qalbi_singanlarga.jpg", category: "Kitoblar" },
-  { id: 'k5', name: "Binafsha shu'lasi", price: "75 000", image: "/images/kitob_binafsha_1.jpg", category: "Kitoblar" },
-  { id: 'k6', name: "Binafsha shu'lasi 2", price: "85 000", image: "/images/kitob_binafsha_2.jpg", category: "Kitoblar" },
-  { id: 'k7', name: "Qur'ondan maktublar", price: "75 000", image: "/images/kitob_qurondan_maktublar.jpg", category: "Kitoblar" }
+  { 
+    id: 'u1', 
+    name: "Ekonom To'plam", 
+    price: "1 000 000", 
+    image: "/images/umra_ekonom.jpg", 
+    category: "Umra Anjomlari",
+    features: [
+      "Ihrom kiyimi (100% paxta)",
+      "Safar kamari (sozlanuvchan oq)",
+      "Qulay joynamoz va tasbeh",
+      "Zikr kitobi va safar yo'riqnomasi"
+    ]
+  },
+  { 
+    id: 'u2', 
+    name: "Standart To'plam", 
+    price: "1 500 000", 
+    image: "/images/umra_standart.jpg", 
+    category: "Umra Anjomlari",
+    features: [
+      "Ihrom kiyimi (Turkiya oliy paxtasi)",
+      "Teri oyoq kiyimi / maxsus shippak",
+      "Maxsus yelkaga osiladigan hamyon set",
+      "Eko-joynamoz, tasbeh va zikr daftari"
+    ]
+  },
+  { 
+    id: 'u3', 
+    name: "Premium To'plam", 
+    price: "2 000 000", 
+    image: "/images/umra_premium.jpg", 
+    category: "Umra Anjomlari",
+    features: [
+      "Premium turk paxtali ipaksimon ihrom",
+      "Haqiqiy teri shippak va maxsus kamar",
+      "Safar gigiyenik to'plami (hidsiz to'plam)",
+      "Hasamatli yong'oq yog'ochli sovg'a qutisi"
+    ]
+  },
+  { id: 'k1', name: "Er-xotinga nasihat", price: "115 000", image: "/images/kitob_er_xotin.jpg", category: "Tarixiy Kitoblar" },
+  { id: 'k2', name: "Jannat bo'stonidagi oilaviy oqshomlar", price: "107 000", image: "/images/kitob_jannat_bostoni.jpg", category: "Tarixiy Kitoblar" },
+  { id: 'k3', name: "Oqshom go'zalliklari", price: "94 000", image: "/images/kitob_oqshom_gozalliklari.jpg", category: "Tarixiy Kitoblar" },
+  { id: 'k4', name: "Qalbi singanlarga", price: "61 000", image: "/images/kitob_qalbi_singanlarga.jpg", category: "Tarixiy Kitoblar" },
+  { id: 'k5', name: "Binafsha shu'lasi", price: "75 000", image: "/images/kitob_binafsha_1.jpg", category: "Tarixiy Kitoblar" },
+  { id: 'k6', name: "Binafsha shu'lasi 2", price: "85 000", image: "/images/kitob_binafsha_2.jpg", category: "Tarixiy Kitoblar" },
+  { id: 'k7', name: "Qur'ondan maktublar", price: "75 000", image: "/images/kitob_qurondan_maktublar.jpg", category: "Tarixiy Kitoblar" },
+  { id: 'p1', name: "Kaba dizaynidagi Qur'on to'plami", price: "450 000", image: "/images/sovga_quron.jpg", category: "Premium Sovg'alar" },
+  { id: 'p2', name: "Sadaf naqshli joynamoz", price: "250 000", image: "/images/sovga_joynamoz.jpg", category: "Premium Sovg'alar" },
+  { id: 'p3', name: "Premium tasbeh va atirlar to'plami", price: "180 000", image: "/images/sovga_tasbeh.jpg", category: "Premium Sovg'alar" }
 ];
 
 // MAIN APP COMPONENT
 // ==========================================
 export default function App() {
+  const [isAdminMode, setIsAdminMode] = useState(window.location.pathname === '/admin');
   const [scrolled, setScrolled] = useState(false);
   const [isUmraModalOpen, setIsUmraModalOpen] = useState(false);
   const [isDiniyModalOpen, setIsDiniyModalOpen] = useState(false);
   const [isKitoblarModalOpen, setIsKitoblarModalOpen] = useState(false);
+  const [isPremiumModalOpen, setIsPremiumModalOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   
+  const [productsState, setProductsState] = useState(() => {
+    try {
+      const saved = localStorage.getItem('qalam_products');
+      return saved ? JSON.parse(saved) : DEFAULT_PRODUCTS;
+    } catch (e) {
+      return DEFAULT_PRODUCTS;
+    }
+  });
+
+  useEffect(() => {
+    localStorage.setItem('qalam_products', JSON.stringify(productsState));
+  }, [productsState]);
+
   const [favorites, setFavorites] = useState(() => {
     try {
       const saved = localStorage.getItem('qalam_favorites');
@@ -144,22 +578,74 @@ export default function App() {
   });
   const [isFavoritesModalOpen, setIsFavoritesModalOpen] = useState(false);
 
+  const addTelemetryLog = (type, message) => {
+    try {
+      const savedLogs = localStorage.getItem('qalam_telemetry_logs');
+      const logs = savedLogs ? JSON.parse(savedLogs) : [];
+      const newLog = {
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+        timestamp: new Date().toLocaleTimeString('uz-UZ') + ' ' + new Date().toLocaleDateString('uz-UZ'),
+        type,
+        message
+      };
+      const updatedLogs = [newLog, ...logs].slice(0, 50);
+      localStorage.setItem('qalam_telemetry_logs', JSON.stringify(updatedLogs));
+    } catch(e) {}
+  };
+
+  const logSingleOrder = (productName) => {
+    try {
+      const orders = parseInt(localStorage.getItem('qalam_stats_orders') || '0', 10);
+      localStorage.setItem('qalam_stats_orders', (orders + 1).toString());
+      addTelemetryLog('Buyurtma', `Foydalanuvchi "${productName}" uchun buyurtma CTA-ni bosdi`);
+    } catch(e) {}
+  };
+
+  const logCheckout = (favoritedProducts) => {
+    try {
+      const orders = parseInt(localStorage.getItem('qalam_stats_orders') || '0', 10);
+      localStorage.setItem('qalam_stats_orders', (orders + 1).toString());
+      const names = favoritedProducts.map(p => `"${p.name}"`).join(', ');
+      addTelemetryLog('Buyurtma', `Foydalanuvchi savatchadagi ${favoritedProducts.length} ta mahsulot bo'yicha buyurtma berdi: ${names}`);
+    } catch(e) {}
+  };
+
+  useEffect(() => {
+    try {
+      const views = parseInt(localStorage.getItem('qalam_stats_views') || '0', 10);
+      localStorage.setItem('qalam_stats_views', (views + 1).toString());
+      addTelemetryLog('Tashrif', "Foydalanuvchi do'kon sahifasiga tashrif buyurdi");
+    } catch(e) {}
+  }, []);
+
   const toggleFavorite = (productId) => {
     setFavorites(prev => {
-      const next = prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId];
+      const isFav = prev.includes(productId);
+      const next = isFav ? prev.filter(id => id !== productId) : [...prev, productId];
       localStorage.setItem('qalam_favorites', JSON.stringify(next));
+      
+      const product = productsState.find(p => p.id === productId);
+      if (product) {
+        if (isFav) {
+          addTelemetryLog('Savatchadan O\'chirildi', `"${product.name}" savatchadan olib tashlandi`);
+        } else {
+          addTelemetryLog('Savatchaga Qo\'shildi', `"${product.name}" savatchaga qo'shildi`);
+          const adds = parseInt(localStorage.getItem('qalam_stats_adds') || '0', 10);
+          localStorage.setItem('qalam_stats_adds', (adds + 1).toString());
+        }
+      }
       return next;
     });
   };
 
-  const filteredProducts = ALL_PRODUCTS.filter(product =>
+  const filteredProducts = productsState.filter(product =>
     product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     product.category.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   // Disable body scroll when any modal is open
   useEffect(() => {
-    if (isUmraModalOpen || isDiniyModalOpen || isKitoblarModalOpen || isFavoritesModalOpen) {
+    if (isUmraModalOpen || isDiniyModalOpen || isKitoblarModalOpen || isFavoritesModalOpen || isPremiumModalOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -167,7 +653,7 @@ export default function App() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [isUmraModalOpen, isDiniyModalOpen, isKitoblarModalOpen, isFavoritesModalOpen]);
+  }, [isUmraModalOpen, isDiniyModalOpen, isKitoblarModalOpen, isFavoritesModalOpen, isPremiumModalOpen]);
 
   // Telemetry Typewriter States
   const [telemetryText, setTelemetryText] = useState("");
@@ -390,6 +876,19 @@ export default function App() {
 
     return () => ctx.revert();
   }, []);
+
+  if (isAdminMode) {
+    return (
+      <AdminDashboard 
+        products={productsState} 
+        setProducts={setProductsState} 
+        onExit={() => {
+          setIsAdminMode(false);
+          window.history.pushState({}, "", "/");
+        }} 
+      />
+    );
+  }
 
   return (
     <div className="relative min-h-screen bg-royalBg text-navyBlue selection:bg-royalBlue selection:text-royalBg overflow-hidden font-sans">
@@ -761,7 +1260,7 @@ export default function App() {
                 </p>
               </div>
               <button
-                onClick={handleTelegramRedirect}
+                onClick={() => setIsPremiumModalOpen(true)}
                 className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[10px] tracking-widest uppercase py-3.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02]"
               >
                 Ko'rish va Buyurtma Berish <ArrowRight className="w-4 h-4" />
@@ -978,11 +1477,22 @@ export default function App() {
             © 2019-2026 Qalam Samarqand. Yetti yillik ishonch va oliy sifat.
           </span>
           
-          <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span className="font-mono text-[10px] text-emerald-400 tracking-[0.15em] uppercase">
-              SAMARQAND MENEJERI JONLI EFIRDA
-            </span>
+          <div className="flex items-center gap-6">
+            <button 
+              onClick={() => {
+                setIsAdminMode(true);
+                window.history.pushState({}, "", "/admin");
+              }}
+              className="font-mono text-[10px] text-royalBg/40 hover:text-white tracking-widest uppercase transition-colors"
+            >
+              Boshqaruv
+            </button>
+            <div className="flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span className="font-mono text-[10px] text-emerald-400 tracking-[0.15em] uppercase">
+                SAMARQAND MENEJERI JONLI EFIRDA
+              </span>
+            </div>
           </div>
         </div>
       </footer>
@@ -1010,133 +1520,84 @@ export default function App() {
                 <span>Yopish</span>
               </button>
             </div>
-
             {/* 3 Premium Packages Layout */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 items-stretch">
-              
-              {/* Card 1: Ekonom To'plam */}
-              <div className="bg-white border border-royalBorder rounded-5xl p-6 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
-                <div>
-                  <div className="h-56 w-full overflow-hidden rounded-3xl mb-6 relative">
-                    <FavoriteHeart 
-                      isFavorite={favorites.includes('u1')} 
-                      onClick={() => toggleFavorite('u1')} 
-                    />
-                    <img 
-                      src="/images/umra_ekonom.jpg" 
-                      alt="Ekonom To'plam" 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                  <h3 className="text-xl font-serif font-bold text-navyBlue mb-2">Ekonom To'plam</h3>
-                  
-                  {/* Elegant Currency Wrapper */}
-                  <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-4">
-                    <span>Narxi:</span>
-                    <span className="text-navyBlue text-sm font-extrabold">1 000 000</span>
-                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
-                  </div>
+              {productsState.filter(p => p.category === "Umra Anjomlari").map(product => {
+                const isStandart = product.id === 'u2' || product.name.includes('Standart');
+                const isPremium = product.id === 'u3' || product.name.includes('Premium');
+                
+                let cardClass = "bg-white border border-royalBorder rounded-5xl p-6 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group";
+                if (isStandart) {
+                  cardClass = "bg-white border border-royalBlue/30 rounded-5xl p-6 shadow-xl hover:shadow-2xl hover:border-royalBlue/50 transition-all duration-500 flex flex-col justify-between group relative";
+                } else if (isPremium) {
+                  cardClass = "bg-white border-2 border-amber-500 shadow-xl shadow-amber-500/5 rounded-5xl p-6 hover:shadow-2xl hover:border-amber-600 transition-all duration-500 flex flex-col justify-between group relative";
+                }
 
-                  <ul className="space-y-2.5 font-mono text-[10px] text-slateDark mb-6 border-t border-royalBorder pt-4">
-                    <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-royalBlue" /> Ihrom kiyimi (100% paxta)</li>
-                    <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-royalBlue" /> Safar kamari (sozlanuvchan oq)</li>
-                    <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-royalBlue" /> Qulay joynamoz va tasbeh</li>
-                    <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-royalBlue" /> Zikr kitobi va safar yo'riqnomasi</li>
-                  </ul>
-                </div>
-                <button
-                  onClick={() => window.open(getTelegramPurchaseLink("Ekonom To'plam", "/images/umra_ekonom.jpg"), '_blank')}
-                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[10px] tracking-widest uppercase py-3.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02]"
-                >
-                  Telegram orqali xarid qilish
-                </button>
-              </div>
+                return (
+                  <div key={product.id} className={cardClass}>
+                    {isStandart && (
+                      <div className="absolute top-0 right-10 -translate-y-1/2 bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase font-bold px-4 py-1 rounded-full shadow-md z-10">
+                        OMBOB TANLOV
+                      </div>
+                    )}
+                    {isPremium && (
+                      <div className="absolute top-0 right-10 -translate-y-1/2 bg-amber-500 text-navyBlue font-mono text-[9px] tracking-widest uppercase font-bold px-4 py-1 rounded-full shadow-md z-10">
+                        VIP BUNDLE
+                      </div>
+                    )}
+                    
+                    <div>
+                      <div className="h-56 w-full overflow-hidden rounded-3xl mb-6 relative">
+                        <FavoriteHeart 
+                          isFavorite={favorites.includes(product.id)} 
+                          onClick={() => toggleFavorite(product.id)} 
+                        />
+                        <img 
+                          src={product.image} 
+                          alt={product.name} 
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                        />
+                      </div>
+                      <h3 className="text-xl font-serif font-bold text-navyBlue mb-2 flex items-center gap-2">
+                        {product.name}
+                        {isPremium && <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>}
+                      </h3>
+                      
+                      {/* Currency Wrapper */}
+                      <div className={`inline-flex items-center gap-1.5 px-4 py-1.5 rounded-2xl font-mono text-xs font-bold mb-4 ${
+                        isPremium 
+                          ? 'bg-amber-500/10 text-amber-700 border border-amber-500/20' 
+                          : isStandart
+                            ? 'bg-royalBlueLight text-royalBlue'
+                            : 'bg-royalBlueLight/40 text-royalBlue'
+                      }`}>
+                        <span>Narxi:</span>
+                        <span className="text-navyBlue text-sm font-extrabold">{product.price}</span>
+                        <span className={`text-[10px] font-semibold ${isPremium ? 'text-amber-700/80' : 'text-royalBlue/70'}`}>so'm</span>
+                      </div>
 
-              {/* Card 2: Standart To'plam */}
-              <div className="bg-white border border-royalBlue/30 rounded-5xl p-6 shadow-xl hover:shadow-2xl hover:border-royalBlue/50 transition-all duration-500 flex flex-col justify-between group relative">
-                <div className="absolute top-0 right-10 -translate-y-1/2 bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase font-bold px-4 py-1 rounded-full shadow-md z-10">
-                  OMBOB TANLOV
-                </div>
-                <div>
-                  <div className="h-56 w-full overflow-hidden rounded-3xl mb-6 relative">
-                    <FavoriteHeart 
-                      isFavorite={favorites.includes('u2')} 
-                      onClick={() => toggleFavorite('u2')} 
-                    />
-                    <img 
-                      src="/images/umra_standart.jpg" 
-                      alt="Standart To'plam" 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
+                      {product.features && product.features.length > 0 && (
+                        <ul className="space-y-2.5 font-mono text-[10px] text-slateDark mb-6 border-t border-royalBorder pt-4">
+                          {product.features.map((f, idx) => (
+                            <li key={idx} className="flex items-center gap-2">
+                              <Check className="w-3.5 h-3.5 text-royalBlue" /> {f}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => {
+                        logSingleOrder(product.name);
+                        window.open(getTelegramPurchaseLink(product.name, product.image), '_blank');
+                      }}
+                      className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[10px] tracking-widest uppercase py-3.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02]"
+                    >
+                      Telegram orqali xarid qilish
+                    </button>
                   </div>
-                  <h3 className="text-xl font-serif font-bold text-navyBlue mb-2">Standart To'plam</h3>
-                  
-                  {/* Elegant Currency Wrapper */}
-                  <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-2xl bg-royalBlueLight text-royalBlue font-mono text-xs font-bold mb-4">
-                    <span>Narxi:</span>
-                    <span className="text-navyBlue text-sm font-extrabold">1 500 000</span>
-                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
-                  </div>
-
-                  <ul className="space-y-2.5 font-mono text-[10px] text-slateDark mb-6 border-t border-royalBorder pt-4">
-                    <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-royalBlue" /> Ihrom kiyimi (Turkiya oliy paxtasi)</li>
-                    <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-royalBlue" /> Teri oyoq kiyimi / maxsus shippak</li>
-                    <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-royalBlue" /> Maxsus yelkaga osiladigan hamyon set</li>
-                    <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-royalBlue" /> Eko-joynamoz, tasbeh va zikr daftari</li>
-                  </ul>
-                </div>
-                <button
-                  onClick={() => window.open(getTelegramPurchaseLink("Standart To'plam", "/images/umra_standart.jpg"), '_blank')}
-                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[10px] tracking-widest uppercase py-3.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02]"
-                >
-                  Telegram orqali xarid qilish
-                </button>
-              </div>
-
-              {/* Card 3: Premium To'plam */}
-              <div className="bg-white border-2 border-amber-500 shadow-xl shadow-amber-500/5 rounded-5xl p-6 hover:shadow-2xl hover:border-amber-600 transition-all duration-500 flex flex-col justify-between group relative">
-                <div className="absolute top-0 right-10 -translate-y-1/2 bg-amber-500 text-navyBlue font-mono text-[9px] tracking-widest uppercase font-bold px-4 py-1 rounded-full shadow-md z-10">
-                  VIP BUNDLE
-                </div>
-                <div>
-                  <div className="h-56 w-full overflow-hidden rounded-3xl mb-6 relative">
-                    <FavoriteHeart 
-                      isFavorite={favorites.includes('u3')} 
-                      onClick={() => toggleFavorite('u3')} 
-                    />
-                    <img 
-                      src="/images/umra_premium.jpg" 
-                      alt="Premium To'plam" 
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                  <h3 className="text-xl font-serif font-bold text-navyBlue mb-2 flex items-center gap-2">
-                    Premium To'plam
-                    <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse"></span>
-                  </h3>
-                  
-                  {/* Elegant Currency Wrapper */}
-                  <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-2xl bg-amber-500/10 text-amber-700 font-mono text-xs font-bold mb-4 border border-amber-500/20">
-                    <span>Narxi:</span>
-                    <span className="text-navyBlue text-sm font-extrabold">2 000 000</span>
-                    <span className="text-[10px] text-amber-700/80 font-semibold">so'm</span>
-                  </div>
-
-                  <ul className="space-y-2.5 font-mono text-[10px] text-slateDark mb-6 border-t border-royalBorder pt-4">
-                    <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-royalBlue" /> Premium turk paxtali ipaksimon ihrom</li>
-                    <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-royalBlue" /> Haqiqiy teri shippak va maxsus kamar</li>
-                    <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-royalBlue" /> Safar gigiyenik to'plami (hidsiz to'plam)</li>
-                    <li className="flex items-center gap-2"><Check className="w-3.5 h-3.5 text-royalBlue" /> Hasamatli yong'oq yog'ochli sovg'a qutisi</li>
-                  </ul>
-                </div>
-                <button
-                  onClick={() => window.open(getTelegramPurchaseLink("Premium To'plam", "/images/umra_premium.jpg"), '_blank')}
-                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[10px] tracking-widest uppercase py-3.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-2 hover:scale-[1.02]"
-                >
-                  Telegram orqali xarid qilish
-                </button>
-              </div>
-
+                );
+              })}
             </div>
 
             {/* Store Information Footer */}
@@ -1221,175 +1682,44 @@ export default function App() {
                 <span>Yopish</span>
               </button>
             </div>
-
-            {/* 5 Premium Book Cards Layout */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6 items-stretch">
-              
-              {/* Book 1 */}
-              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
-                <div>
-                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
-                    <FavoriteHeart 
-                      isFavorite={favorites.includes('b1')} 
-                      onClick={() => toggleFavorite('b1')} 
-                    />
-                    <img 
-                      src="/images/kitob_hadis_toplam.jpg" 
-                      alt="Hadislar to'plami" 
-                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
-                    />
+            {/* Diniy Kitoblar Dynamic Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 items-stretch">
+              {productsState.filter(p => p.category === "Diniy Kitoblar").map(product => (
+                <div key={product.id} className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
+                  <div>
+                    <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                      <FavoriteHeart 
+                        isFavorite={favorites.includes(product.id)} 
+                        onClick={() => toggleFavorite(product.id)} 
+                      />
+                      <img 
+                        src={product.image} 
+                        alt={product.name} 
+                        className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
+                      />
+                    </div>
+                    <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
+                      {product.name}
+                    </h3>
+                    
+                    {/* Elegant Currency Wrapper */}
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
+                      <span>Narxi:</span>
+                      <span className="text-navyBlue text-sm font-extrabold">{product.price}</span>
+                      <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
+                    </div>
                   </div>
-                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
-                    Hadislar to'plami
-                  </h3>
-                  
-                  {/* Elegant Currency Wrapper */}
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
-                    <span>Narxi:</span>
-                    <span className="text-navyBlue text-sm font-extrabold">50 000</span>
-                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
-                  </div>
+                  <button
+                    onClick={() => {
+                      logSingleOrder(product.name);
+                      window.open(getTelegramPurchaseLink(product.name, product.image), '_blank');
+                    }}
+                    className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
+                  >
+                    Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
                 </div>
-                <button
-                  onClick={() => window.open(getTelegramPurchaseLink("Hadislar to'plami", "/images/kitob_hadis_toplam.jpg"), '_blank')}
-                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
-                >
-                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              {/* Book 2 */}
-              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
-                <div>
-                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
-                    <FavoriteHeart 
-                      isFavorite={favorites.includes('b2')} 
-                      onClick={() => toggleFavorite('b2')} 
-                    />
-                    <img 
-                      src="/images/kitob_365_duo.jpg" 
-                      alt="365 kunda duo" 
-                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
-                    365 kunda duo
-                  </h3>
-                  
-                  {/* Elegant Currency Wrapper */}
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
-                    <span>Narxi:</span>
-                    <span className="text-navyBlue text-sm font-extrabold">105 000</span>
-                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => window.open(getTelegramPurchaseLink("365 kunda duo", "/images/kitob_365_duo.jpg"), '_blank')}
-                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
-                >
-                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              {/* Book 3 */}
-              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
-                <div>
-                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
-                    <FavoriteHeart 
-                      isFavorite={favorites.includes('b3')} 
-                      onClick={() => toggleFavorite('b3')} 
-                    />
-                    <img 
-                      src="/images/kitob_365_hadis.jpg" 
-                      alt="365 kunda hadis" 
-                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
-                    365 kunda hadis
-                  </h3>
-                  
-                  {/* Elegant Currency Wrapper */}
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
-                    <span>Narxi:</span>
-                    <span className="text-navyBlue text-sm font-extrabold">105 000</span>
-                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => window.open(getTelegramPurchaseLink("365 kunda hadis", "/images/kitob_365_hadis.jpg"), '_blank')}
-                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
-                >
-                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              {/* Book 4 */}
-              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
-                <div>
-                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
-                    <FavoriteHeart 
-                      isFavorite={favorites.includes('b4')} 
-                      onClick={() => toggleFavorite('b4')} 
-                    />
-                    <img 
-                      src="/images/kitob_paygambar_taniyman.jpg" 
-                      alt="Payg'ambarimni taniyman" 
-                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
-                    Payg'ambarimni taniyman
-                  </h3>
-                  
-                  {/* Elegant Currency Wrapper */}
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
-                    <span>Narxi:</span>
-                    <span className="text-navyBlue text-sm font-extrabold">107 000</span>
-                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => window.open(getTelegramPurchaseLink("Payg'ambarimni taniyman", "/images/kitob_paygambar_taniyman.jpg"), '_blank')}
-                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
-                >
-                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              {/* Book 5 */}
-              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
-                <div>
-                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
-                    <FavoriteHeart 
-                      isFavorite={favorites.includes('b5')} 
-                      onClick={() => toggleFavorite('b5')} 
-                    />
-                    <img 
-                      src="/images/kitob_paygambarlar_qissasi.jpg" 
-                      alt="Payg'ambarlar qissasi" 
-                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
-                    Payg'ambarlar qissasi
-                  </h3>
-                  
-                  {/* Elegant Currency Wrapper */}
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
-                    <span>Narxi:</span>
-                    <span className="text-navyBlue text-sm font-extrabold">84 000</span>
-                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => window.open(getTelegramPurchaseLink("Payg'ambarlar qissasi", "/images/kitob_paygambarlar_qissasi.jpg"), '_blank')}
-                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
-                >
-                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
+              ))}
             </div>
 
             {/* Store Information Footer */}
@@ -1463,7 +1793,7 @@ export default function App() {
                   Ma'naviy Va Ilmiy
                 </span>
                 <h2 className="text-xl md:text-4xl font-bold font-serif text-navyBlue mt-3">
-                  Kitoblar Kolleksiyasi
+                  Tarixiy Kitoblar Kolleksiyasi
                 </h2>
               </div>
               <button 
@@ -1475,240 +1805,167 @@ export default function App() {
               </button>
             </div>
 
-            {/* 7 Premium Book Cards Layout */}
+            {/* Tarixiy Kitoblar Dynamic Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 items-stretch">
-              
-              {/* Book 1 */}
-              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
-                <div>
-                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
-                    <FavoriteHeart 
-                      isFavorite={favorites.includes('k1')} 
-                      onClick={() => toggleFavorite('k1')} 
-                    />
-                    <img 
-                      src="/images/kitob_er_xotin.jpg" 
-                      alt="Er-xotinga nasihat" 
-                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
-                    />
+              {productsState.filter(p => p.category === "Tarixiy Kitoblar").map(product => (
+                <div key={product.id} className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
+                  <div>
+                    <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                      <FavoriteHeart 
+                        isFavorite={favorites.includes(product.id)} 
+                        onClick={() => toggleFavorite(product.id)} 
+                      />
+                      <img 
+                        src={product.image} 
+                        alt={product.name} 
+                        className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
+                      />
+                    </div>
+                    <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
+                      {product.name}
+                    </h3>
+                    
+                    {/* Elegant Currency Wrapper */}
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
+                      <span>Narxi:</span>
+                      <span className="text-navyBlue text-sm font-extrabold">{product.price}</span>
+                      <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
+                    </div>
                   </div>
-                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
-                    Er-xotinga nasihat
-                  </h3>
-                  
-                  {/* Elegant Currency Wrapper */}
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
-                    <span>Narxi:</span>
-                    <span className="text-navyBlue text-sm font-extrabold">115 000</span>
-                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
-                  </div>
+                  <button
+                    onClick={() => {
+                      logSingleOrder(product.name);
+                      window.open(getTelegramPurchaseLink(product.name, product.image), '_blank');
+                    }}
+                    className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
+                  >
+                    Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
                 </div>
-                <button
-                  onClick={() => window.open(getTelegramPurchaseLink("Er-xotinga nasihat", "/images/kitob_er_xotin.jpg"), '_blank')}
-                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
-                >
-                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+              ))}
+            </div>
+
+            {/* Store Information Footer */}
+            <div className="mt-10 p-6 rounded-3xl bg-royalBlueLight/30 border border-royalBlue/10 grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="flex items-center gap-3.5 text-navyBlue">
+                <div className="p-3 bg-white rounded-full border border-royalBlue/15 shadow-sm text-royalBlue flex-shrink-0">
+                  <MapPin className="w-5 h-5" />
+                </div>
+                <div>
+                  <span className="block font-mono text-[9px] uppercase tracking-wider text-royalBlue font-bold">// Bizning Manzil</span>
+                  <span className="text-xs font-medium">Samarqand shahar, Registon non bozorchasi ro'parasidagi "Qalam" kitoblar do'koni</span>
+                </div>
               </div>
 
-              {/* Book 2 */}
-              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
-                <div>
-                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
-                    <FavoriteHeart 
-                      isFavorite={favorites.includes('k2')} 
-                      onClick={() => toggleFavorite('k2')} 
-                    />
-                    <img 
-                      src="/images/kitob_jannat_bostoni.jpg" 
-                      alt="Jannat bo'stonidagi oilaviy oqshomlar" 
-                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
-                    Jannat bo'stonidagi oilaviy oqshomlar
-                  </h3>
-                  
-                  {/* Elegant Currency Wrapper */}
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
-                    <span>Narxi:</span>
-                    <span className="text-navyBlue text-sm font-extrabold">107 000</span>
-                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
-                  </div>
+              <div className="flex items-center gap-3.5 text-navyBlue">
+                <div className="p-3 bg-white rounded-full border border-royalBlue/15 shadow-sm text-royalBlue flex-shrink-0">
+                  <Phone className="w-5 h-5" />
                 </div>
-                <button
-                  onClick={() => window.open(getTelegramPurchaseLink("Jannat bo'stonidagi oilaviy oqshomlar", "/images/kitob_jannat_bostoni.jpg"), '_blank')}
-                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
-                >
-                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+                <div>
+                  <span className="block font-mono text-[9px] uppercase tracking-wider text-royalBlue font-bold">// Telefon raqamlar</span>
+                  <span className="text-xs font-medium flex flex-col sm:flex-row sm:gap-x-4">
+                    <a href="tel:+998979162526" className="hover:text-royalBlue hover:underline transition-colors font-mono font-bold">+998 (97) 916 25 26</a>
+                    <a href="tel:+998970252600" className="hover:text-royalBlue hover:underline transition-colors font-mono font-bold">+998 (97) 025 26 00</a>
+                  </span>
+                </div>
               </div>
 
-              {/* Book 3 */}
-              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
-                <div>
-                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
-                    <FavoriteHeart 
-                      isFavorite={favorites.includes('k3')} 
-                      onClick={() => toggleFavorite('k3')} 
-                    />
-                    <img 
-                      src="/images/kitob_oqshom_gozalliklari.jpg" 
-                      alt="Oqshom go'zalliklari" 
-                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
-                    Oqshom go'zalliklari
-                  </h3>
-                  
-                  {/* Elegant Currency Wrapper */}
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
-                    <span>Narxi:</span>
-                    <span className="text-navyBlue text-sm font-extrabold">94 000</span>
-                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
-                  </div>
+              <div className="flex items-center gap-3.5 text-navyBlue">
+                <div className="p-3 bg-white rounded-full border border-royalBlue/15 shadow-sm text-royalBlue flex-shrink-0">
+                  <MessageSquare className="w-5 h-5" />
                 </div>
-                <button
-                  onClick={() => window.open(getTelegramPurchaseLink("Oqshom go'zalliklari", "/images/kitob_oqshom_gozalliklari.jpg"), '_blank')}
-                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
-                >
-                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              {/* Book 4 */}
-              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
                 <div>
-                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
-                    <FavoriteHeart 
-                      isFavorite={favorites.includes('k4')} 
-                      onClick={() => toggleFavorite('k4')} 
-                    />
-                    <img 
-                      src="/images/kitob_qalbi_singanlarga.jpg" 
-                      alt="Qalbi singanlarga" 
-                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
-                    Qalbi singanlarga
-                  </h3>
-                  
-                  {/* Elegant Currency Wrapper */}
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
-                    <span>Narxi:</span>
-                    <span className="text-navyBlue text-sm font-extrabold">61 000</span>
-                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
-                  </div>
+                  <span className="block font-mono text-[9px] uppercase tracking-wider text-royalBlue font-bold">// Ijtimoiy tarmoqlar</span>
+                  <span className="text-xs font-medium flex flex-wrap gap-x-4 gap-y-2">
+                    <a 
+                      href="https://t.me/QalamSamarqand" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="hover:text-royalBlue hover:underline transition-colors font-semibold flex items-center gap-2"
+                    >
+                      <TelegramIcon className="w-4 h-4 text-royalBlue" />
+                      Telegram
+                    </a>
+                    <a 
+                      href="https://www.instagram.com/qalamsamarqand?igsh=ZmZvZzdmOWRqc2V3" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="hover:text-royalBlue hover:underline transition-colors font-semibold flex items-center gap-2"
+                    >
+                      <InstagramIcon className="w-4 h-4 text-royalBlue" />
+                      Instagram
+                    </a>
+                  </span>
                 </div>
-                <button
-                  onClick={() => window.open(getTelegramPurchaseLink("Qalbi singanlarga", "/images/kitob_qalbi_singanlarga.jpg"), '_blank')}
-                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
-                >
-                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
-                </button>
               </div>
+            </div>
 
-              {/* Book 5 */}
-              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
-                <div>
-                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
-                    <FavoriteHeart 
-                      isFavorite={favorites.includes('k5')} 
-                      onClick={() => toggleFavorite('k5')} 
-                    />
-                    <img 
-                      src="/images/kitob_binafsha_1.jpg" 
-                      alt="Binafsha shu'lasi" 
-                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
-                    />
+          </div>
+        </div>
+      )}
+
+      {/* Premium Overlay Modal for Premium Sovg'alar */}
+      {isPremiumModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-navyBlue/60 backdrop-blur-md p-4 animate-fade-in">
+          <div className="bg-royalBg border border-royalBlue/10 rounded-[1.5rem] md:rounded-[2.5rem] w-full max-w-6xl max-h-[96vh] md:max-h-[90vh] overflow-y-auto shadow-2xl relative p-4 sm:p-6 md:p-10 animate-scale-up">
+            
+            {/* Modal Header */}
+            <div className="flex justify-between items-start mb-6 md:mb-8 pb-4 border-b border-royalBorder">
+              <div>
+                <span className="font-mono text-[10px] tracking-[0.2em] uppercase text-royalBlue border border-royalBlue/20 rounded-full px-4 py-1.5 bg-royalBlueLight/30 font-bold">
+                  Nafis va Qadrli
+                </span>
+                <h2 className="text-xl md:text-4xl font-bold font-serif text-navyBlue mt-3">
+                  Premium Sovg'alar Kolleksiyasi
+                </h2>
+              </div>
+              <button 
+                onClick={() => setIsPremiumModalOpen(false)}
+                className="bg-navyBlue/5 hover:bg-navyBlue/10 text-navyBlue p-2 sm:p-3 rounded-full transition-all flex items-center gap-1 sm:gap-1.5 font-mono text-[8px] sm:text-[10px] tracking-wider uppercase font-bold"
+              >
+                <X className="w-4 h-4" />
+                <span>Yopish</span>
+              </button>
+            </div>
+
+            {/* Premium Sovg'alar Dynamic Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 items-stretch">
+              {productsState.filter(p => p.category === "Premium Sovg'alar").map(product => (
+                <div key={product.id} className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
+                  <div>
+                    <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
+                      <FavoriteHeart 
+                        isFavorite={favorites.includes(product.id)} 
+                        onClick={() => toggleFavorite(product.id)} 
+                      />
+                      <img 
+                        src={product.image} 
+                        alt={product.name} 
+                        className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
+                      />
+                    </div>
+                    <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
+                      {product.name}
+                    </h3>
+                    
+                    {/* Elegant Currency Wrapper */}
+                    <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
+                      <span>Narxi:</span>
+                      <span className="text-navyBlue text-sm font-extrabold">{product.price}</span>
+                      <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
+                    </div>
                   </div>
-                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
-                    Binafsha shu'lasi
-                  </h3>
-                  
-                  {/* Elegant Currency Wrapper */}
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
-                    <span>Narxi:</span>
-                    <span className="text-navyBlue text-sm font-extrabold">75 000</span>
-                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
-                  </div>
+                  <button
+                    onClick={() => {
+                      logSingleOrder(product.name);
+                      window.open(getTelegramPurchaseLink(product.name, product.image), '_blank');
+                    }}
+                    className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
+                  >
+                    Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
                 </div>
-                <button
-                  onClick={() => window.open(getTelegramPurchaseLink("Binafsha shu'lasi", "/images/kitob_binafsha_1.jpg"), '_blank')}
-                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
-                >
-                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              {/* Book 6 */}
-              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
-                <div>
-                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
-                    <FavoriteHeart 
-                      isFavorite={favorites.includes('k6')} 
-                      onClick={() => toggleFavorite('k6')} 
-                    />
-                    <img 
-                      src="/images/kitob_binafsha_2.jpg" 
-                      alt="Binafsha shu'lasi 2" 
-                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
-                    Binafsha shu'lasi 2
-                  </h3>
-                  
-                  {/* Elegant Currency Wrapper */}
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
-                    <span>Narxi:</span>
-                    <span className="text-navyBlue text-sm font-extrabold">85 000</span>
-                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => window.open(getTelegramPurchaseLink("Binafsha shu'lasi 2", "/images/kitob_binafsha_2.jpg"), '_blank')}
-                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
-                >
-                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
-              {/* Book 7 */}
-              <div className="bg-white border border-royalBorder rounded-4xl p-5 shadow-xl hover:shadow-2xl hover:border-royalBlue/20 transition-all duration-500 flex flex-col justify-between group">
-                <div>
-                  <div className="h-60 w-full overflow-hidden rounded-2xl mb-4 relative flex items-center justify-center bg-royalBg">
-                    <FavoriteHeart 
-                      isFavorite={favorites.includes('k7')} 
-                      onClick={() => toggleFavorite('k7')} 
-                    />
-                    <img 
-                      src="/images/kitob_qurondan_maktublar.jpg" 
-                      alt="Qur'ondan maktublar" 
-                      className="max-h-full max-w-full object-contain group-hover:scale-105 transition-transform duration-700"
-                    />
-                  </div>
-                  <h3 className="text-sm font-serif font-bold text-navyBlue mb-1.5 leading-snug line-clamp-2 min-h-[2.5rem]">
-                    Qur'ondan maktublar
-                  </h3>
-                  
-                  {/* Elegant Currency Wrapper */}
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-2xl bg-royalBlueLight/40 text-royalBlue font-mono text-xs font-bold mb-3">
-                    <span>Narxi:</span>
-                    <span className="text-navyBlue text-sm font-extrabold">75 000</span>
-                    <span className="text-[10px] text-royalBlue/70 font-semibold">so'm</span>
-                  </div>
-                </div>
-                <button
-                  onClick={() => window.open(getTelegramPurchaseLink("Qur'ondan maktublar", "/images/kitob_qurondan_maktublar.jpg"), '_blank')}
-                  className="w-full bg-navyBlue hover:bg-royalBlue text-white font-mono text-[9px] tracking-widest uppercase py-2.5 rounded-full font-bold transition-all duration-300 shadow-md hover:shadow-lg flex items-center justify-center gap-1.5 hover:scale-[1.02]"
-                >
-                  Buyurtma berish <ArrowRight className="w-3.5 h-3.5" />
-                </button>
-              </div>
-
+              ))}
             </div>
 
             {/* Store Information Footer */}
@@ -1799,7 +2056,7 @@ export default function App() {
               <div className="space-y-4">
                 <div className="divide-y divide-royalBorder max-h-[45vh] overflow-y-auto pr-2">
                   {favorites.map(id => {
-                    const product = ALL_PRODUCTS.find(p => p.id === id);
+                    const product = productsState.find(p => p.id === id);
                     if (!product) return null;
                     return (
                       <div key={id} className="py-4 flex items-center justify-between gap-4 group">
@@ -1834,7 +2091,8 @@ export default function App() {
                   
                   <button
                     onClick={() => {
-                      const favoritedProducts = favorites.map(id => ALL_PRODUCTS.find(p => p.id === id)).filter(Boolean);
+                      const favoritedProducts = favorites.map(id => productsState.find(p => p.id === id)).filter(Boolean);
+                      logCheckout(favoritedProducts);
                       const listText = favoritedProducts.map((p, idx) => `${idx + 1}. ${p.name} - ${p.price} so'm`).join('\n');
                       const message = `Assalomu alaykum! Men quyidagi mahsulotlarni savatchamga qo'shdim va sotib olmoqchiman:\n\n${listText}\n\nHammasi mavjudmi?`;
                       window.open(`https://t.me/Abdurafiq_A?text=${encodeURIComponent(message)}`, '_blank');
